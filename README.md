@@ -34,7 +34,7 @@ and should never be updated in the repo, so in case you need it please ask the f
 ## Installation
 
 ```
-npm install
+npm install  --legacy-peer-deps
 ```
 
 ## Running the app in dev environment
