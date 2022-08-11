@@ -1,2 +1,0 @@
-# dirtyhash
-Blockchain Security
