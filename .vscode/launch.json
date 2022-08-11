@@ -4,31 +4,31 @@
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Dev typescript-express-starter",
+            "name": "Dev Dirtyhash",
             "command": "npm run dev"
         },
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Start typescript-express-starter",
+            "name": "Start Dirtyhash",
             "command": "npm run start"
         },
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Test typescript-express-starter",
+            "name": "Test Dirtyhash",
             "command": "npm run test"
         },
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Lint typescript-express-starter",
+            "name": "Lint Dirtyhash",
             "command": "npm run lint"
         },
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Lint:Fix typescript-express-starter",
+            "name": "Lint:Fix Dirtyhash",
             "command": "npm run lint:fix"
         }
     ]
