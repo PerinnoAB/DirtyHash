@@ -21,7 +21,7 @@ class QueryService {
     }
 
     let queryValue = await this.db.collection(queryCollection).doc(stringQuery).get();
-    return { ...queryValue.data(), collection: queryCollection };
+    return { ...queryValue.data(), collection: queryCollection, id: queryValue.id };
   }
 }
 
