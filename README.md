@@ -31,6 +31,10 @@ the service-account-file.json. should look like this:
 
 and should never be updated in the repo, so in case you need it please ask the firebase admin to give you the access details.
 
+Additional environment variables. 
+PORT. 
+LOGS_DIR. 
+
 ## Installation
 
 ```
