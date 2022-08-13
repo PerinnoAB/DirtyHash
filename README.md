@@ -35,7 +35,7 @@ Additional environment variables.
 
 ```
 export PORT=80
-export LOGS_DIR=logs
+export LOG_DIR=logs
 ```
 
 ## Installation
