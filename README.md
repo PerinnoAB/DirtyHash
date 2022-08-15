@@ -31,6 +31,13 @@ the service-account-file.json. should look like this:
 
 and should never be updated in the repo, so in case you need it please ask the firebase admin to give you the access details.
 
+Additional environment variables. 
+
+```
+export PORT=80
+export LOG_DIR=logs
+```
+
 ## Installation
 
 ```
@@ -48,3 +55,7 @@ npm run dev
 ```
 npm run start
 ```
+
+## Swagger interface
+
+/api-docs
