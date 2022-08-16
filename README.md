@@ -56,6 +56,11 @@ npm run dev
 npm run start
 ```
 
+or with pm2
+```
+pm2 start npm -- start
+```
+
 ## Swagger interface
 
 /api-docs
