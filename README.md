@@ -34,7 +34,7 @@ and should never be updated in the repo, so in case you need it please ask the f
 Additional environment variables. 
 
 ```
-export PORT=80
+export PORT=8080
 export LOG_DIR=logs
 ```
 
