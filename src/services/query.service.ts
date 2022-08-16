@@ -1,14 +1,8 @@
-import { applicationDefault, initializeApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
 import { validate } from 'multicoin-address-validator';
+import FirestoreService from './firestore.service';
 
 class QueryService {
-  // Initialize Firebase
-  app = initializeApp({
-    credential: applicationDefault(),
-  });
-
-  db = getFirestore(this.app);
+  public firestoreService = new FirestoreService();
 
   public async queryString(stringQuery: string): Promise<any> {
     let queryCollection = 'unknown';
@@ -20,7 +14,7 @@ class QueryService {
       queryCollection = 'eth';
     }
 
-    let queryValue = await this.db.collection(queryCollection).doc(stringQuery).get();
+    let queryValue = await this.firestoreService.getDoc(queryCollection, stringQuery);
     if (queryValue.data()) {
       return { ...queryValue.data(), collection: queryCollection, id: queryValue.id };
     }
