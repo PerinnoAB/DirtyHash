@@ -16,7 +16,9 @@
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "dependencies": {
+    "@google-cloud/logging-bunyan": "^4.1.1",
     "bcrypt": "^5.0.1",
+    "bunyan": "^1.8.15",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "class-validator-jsonschema": "^3.1.1",
