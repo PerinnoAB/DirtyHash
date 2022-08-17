@@ -6,5 +6,5 @@ export LOG_DIR=logs
 export LOG_FORMAT=":remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms"
 
 echo "Launching server with pm2.."
-pm2 start npm -- start
+pm2 start npm -- start -o dirtyhash-server.log
 echo "Finished launching server."
