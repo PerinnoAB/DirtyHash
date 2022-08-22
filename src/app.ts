@@ -46,13 +46,12 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(
-      morgan(LOG_FORMAT, {
+      morgan(/*LOG_FORMAT*/ 'short', {
         skip: function (req, res) {
           return !req.url.startsWith('/query');
         },
       }),
     );
-    logger.info(LOG_FORMAT);
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
