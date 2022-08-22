@@ -52,6 +52,7 @@ class App {
         },
       }),
     );
+    logger.info(LOG_FORMAT);
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
