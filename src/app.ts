@@ -46,11 +46,14 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(
-      morgan(/*LOG_FORMAT*/ 'short', {
-        skip: function (req, res) {
-          return !req.url.startsWith('/query');
+      morgan(
+        /*LOG_FORMAT*/ ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - :response-time ms',
+        {
+          skip: function (req, res) {
+            return !req.url.startsWith('/query');
+          },
         },
-      }),
+      ),
     );
     this.app.use(hpp());
     this.app.use(helmet());
