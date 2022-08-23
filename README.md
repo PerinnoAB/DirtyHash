@@ -60,7 +60,13 @@ npm run start
 or with pm2
 
 ```
-pm2 start npm -- start --name dirtyhash-server --watch
+pm2 start npm -- start --name dirtyhash-server
+```
+
+pm2 restart with updating env variables
+
+```
+pm2 restart all --update-env
 ```
 
 pm2 config
