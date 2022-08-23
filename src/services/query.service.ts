@@ -2,15 +2,18 @@ import { validate } from 'multicoin-address-validator';
 import validator from 'validator';
 import extractDomain from 'extract-domain';
 import FirestoreService from './firestore.service';
+import VirustotalService from './virustotal.service';
 
 class QueryService {
   public firestoreService = new FirestoreService();
+  public virustotalService = new VirustotalService();
 
   public async queryString(stringQuery: string): Promise<any> {
     let queryCollection = 'unknown';
     let analysisResult = 'caution';
     let analysisSafetyScore = 50;
     let analysisMethod = 'ML';
+    let analysisSource = 'dirtyhash';
 
     if (validate(stringQuery, 'btc')) {
       queryCollection = 'btc';
@@ -54,6 +57,7 @@ class QueryService {
       }
     }
 
+    // If blacklist or whitelist is hit, then return the result
     const dhResult = queryValue.data();
     if (queryValue.data()) {
       if (!dhResult['source']) {
@@ -67,11 +71,22 @@ class QueryService {
         method: analysisMethod,
         ...dhResult,
       };
+    } else {
+      // In case of domain that is not in our DB, query the Virustotal service
+      if (queryCollection === 'domains') {
+        console.log('Calling Virustotal for domain: ', stringQuery);
+        analysisResult = await this.virustotalService.getVirustotalVerdict(stringQuery);
+        analysisMethod = 'VirusTotal';
+        analysisSource = 'VirusTotal';
+      }
     }
+
+    // No blacklist or whitelist match, nor a domain
     return {
       result: analysisResult,
       id: queryValue.id,
       collection: queryCollection,
+      source: analysisSource,
       reputationScore: analysisSafetyScore,
       method: analysisMethod,
     };
