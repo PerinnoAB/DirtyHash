@@ -31,17 +31,13 @@ class QueryService {
         icloud_lowercase: true,
         icloud_remove_subaddress: true,
       });
-      console.log('Email: {0}', stringQuery);
     } else if (validator.isURL(stringQuery)) {
       queryCollection = 'domains';
       stringQuery = extractDomain(stringQuery);
-      console.log('Domain: {0}', stringQuery);
     } else if (stringQuery.startsWith('@')) {
       queryCollection = 'twitter';
-      console.log('Twitter: {0}', stringQuery);
     }
 
-    console.log('Coll: {0}, Query: {1}', queryCollection, stringQuery);
     // Search blacklists first
     let queryValue = await this.firestoreService.getDoc(queryCollection, stringQuery);
     if (queryValue.data()) {
@@ -50,7 +46,6 @@ class QueryService {
       analysisMethod = 'blacklist';
     } else {
       // then search whitelists
-      console.log('Firebase alternate colelction: {0}', 'wl-' + queryCollection);
       queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
       if (queryValue.data()) {
         analysisResult = 'safe';
