@@ -1,5 +1,5 @@
 import { applicationDefault, initializeApp } from 'firebase-admin/app';
-import { DocumentSnapshot, getFirestore } from 'firebase-admin/firestore';
+import { DocumentSnapshot, FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 class FirestoreService {
   // Initialize Firebase
@@ -20,6 +20,11 @@ class FirestoreService {
       userComments.push(doc.data());
     });
     return userComments;
+  }
+
+  public async updateDocStats(collectionName: string, docName: string) {
+    const dbRef = this.db.collection(collectionName).doc(docName);
+    await dbRef.update('times-searched', FieldValue.increment(1), 'last-searched', FieldValue.serverTimestamp());
   }
 
   public async setDoc(collectionName: string, docName: string, payload: any): Promise<FirebaseFirestore.WriteResult> {

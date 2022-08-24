@@ -49,6 +49,7 @@ class QueryService {
       analysisSafetyScore = 0;
       analysisMethod = 'blacklist';
       userComments = await this.firestoreService.getUserComments(queryCollection, stringQuery);
+      this.firestoreService.updateDocStats(queryCollection, stringQuery);
     } else {
       // then search whitelists
       queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
@@ -57,6 +58,7 @@ class QueryService {
         analysisSafetyScore = 100;
         analysisMethod = 'whitelist';
         userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, stringQuery);
+        this.firestoreService.updateDocStats('wl-' + queryCollection, stringQuery);
       }
     }
 
