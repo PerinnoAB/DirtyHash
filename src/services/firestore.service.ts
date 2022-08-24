@@ -13,7 +13,16 @@ class FirestoreService {
     return await this.db.collection(collectionName).doc(docName).get();
   }
 
-  public async setDoc(collectionName: string, docName: string, payload: any) {
+  public async getUserComments(collectionName: string, docName: string): Promise<any[]> {
+    const userComments = [];
+    const userCommentDocs = await this.db.collection(collectionName).doc(docName).collection('user-comments').get();
+    userCommentDocs.forEach(doc => {
+      userComments.push(doc.data());
+    });
+    return userComments;
+  }
+
+  public async setDoc(collectionName: string, docName: string, payload: any): Promise<FirebaseFirestore.WriteResult> {
     return await this.db
       .collection(collectionName)
       .doc(docName)

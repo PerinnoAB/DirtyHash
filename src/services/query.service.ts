@@ -14,6 +14,7 @@ class QueryService {
     let analysisSafetyScore = 50;
     let analysisMethod = 'ML';
     let analysisSource = 'dirtyhash';
+    let userComments = [];
 
     if (validate(stringQuery, 'btc')) {
       queryCollection = 'btc';
@@ -47,6 +48,7 @@ class QueryService {
       analysisResult = 'fraud';
       analysisSafetyScore = 0;
       analysisMethod = 'blacklist';
+      userComments = await this.firestoreService.getUserComments(queryCollection, stringQuery);
     } else {
       // then search whitelists
       queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
@@ -54,6 +56,7 @@ class QueryService {
         analysisResult = 'safe';
         analysisSafetyScore = 100;
         analysisMethod = 'whitelist';
+        userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, stringQuery);
       }
     }
 
@@ -63,6 +66,7 @@ class QueryService {
       if (!dhResult['source']) {
         dhResult['source'] = 'dirtyhash';
       }
+
       return {
         result: analysisResult,
         id: queryValue.id,
@@ -70,6 +74,7 @@ class QueryService {
         safetyScore: analysisSafetyScore,
         method: analysisMethod,
         ...dhResult,
+        comments: userComments,
       };
     } else {
       // In case of domain that is not in our DB, query the Virustotal service
