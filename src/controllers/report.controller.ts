@@ -33,14 +33,16 @@ export class ReportController {
     @BodyParam('email') email?: string,
   ) {
     try {
-      let category = ReportCategory[categoryAsString];
+      const category = ReportCategory[categoryAsString];
       if (!category) {
         return null;
       }
-      let reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
-      return await this.reportService.createReport(reportData);
+      const reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
+      // Write report to data without waiting for it to finish
+      this.reportService.createReport(reportData);
+      return true;
     } catch (error) {
-      console.error(error);
+      console.error('Error while creating report: ', error);
       return null;
     }
   }

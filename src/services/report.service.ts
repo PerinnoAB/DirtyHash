@@ -6,7 +6,7 @@ class ReportService {
   reportsCollectionName = 'reports';
 
   public async createReport(payload: Report): Promise<any> {
-    return this.firestoreService.setDoc(this.reportsCollectionName, payload.reportString, payload);
+    return this.firestoreService.addDoc(this.reportsCollectionName, payload);
   }
 }
 

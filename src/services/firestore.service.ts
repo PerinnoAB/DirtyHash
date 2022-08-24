@@ -33,6 +33,11 @@ class FirestoreService {
       .doc(docName)
       .set(JSON.parse(JSON.stringify(payload)));
   }
+
+  public async addDoc(collectionName: string, payload: any) {
+    payload['timestamp'] = new Date().getTime();
+    await this.db.collection(collectionName).add(JSON.parse(JSON.stringify(payload)));
+  }
 }
 
 export default FirestoreService;
