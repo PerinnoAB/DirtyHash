@@ -66,7 +66,7 @@ class QueryService {
     const dhResult = queryValue.data();
     if (queryValue.data()) {
       if (!dhResult['source']) {
-        dhResult['source'] = 'dirtyhash';
+        dhResult['source'] = 'DirtyHash';
       }
 
       return {
@@ -86,17 +86,23 @@ class QueryService {
         analysisMethod = 'VirusTotal';
         analysisSource = 'VirusTotal';
       }
-    }
 
-    // No blacklist or whitelist match, nor a domain
-    return {
-      result: analysisResult,
-      id: queryValue.id,
-      collection: queryCollection,
-      source: analysisSource,
-      reputationScore: analysisSafetyScore,
-      method: analysisMethod,
-    };
+      // See if we have stats in 'searches' collection
+      queryValue = await this.firestoreService.getDoc('searches', stringQuery);
+      const dhResult = queryValue.data();
+
+      this.firestoreService.updateDocStats('searches', stringQuery);
+      // No blacklist or whitelist match, nor a domain
+      return {
+        result: analysisResult,
+        id: queryValue.id,
+        collection: queryCollection,
+        source: analysisSource,
+        reputationScore: analysisSafetyScore,
+        method: analysisMethod,
+        ...dhResult,
+      };
+    }
   }
 }
 

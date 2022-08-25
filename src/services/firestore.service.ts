@@ -24,7 +24,7 @@ class FirestoreService {
 
   public async updateDocStats(collectionName: string, docName: string) {
     const dbRef = this.db.collection(collectionName).doc(docName);
-    await dbRef.update('times-searched', FieldValue.increment(1), 'last-searched', FieldValue.serverTimestamp());
+    await dbRef.set({ 'times-searched': FieldValue.increment(1), 'last-searched': FieldValue.serverTimestamp() }, { merge: true });
   }
 
   public async setDoc(collectionName: string, docName: string, payload: any): Promise<FirebaseFirestore.WriteResult> {
