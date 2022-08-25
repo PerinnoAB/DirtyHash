@@ -94,13 +94,19 @@ class App {
         // },
       },
       info: {
-        description: 'REST API documentation for the DirtyHash™ service',
-        title: 'DirtyHash™ REST API',
+        description: 'REST API documentation',
+        title: 'DirtyHash™ API',
         version: '1.0.0',
       },
     });
 
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
+    const swaggerUIOptions = {
+      customCss: '.swagger-ui .topbar { display: none }',
+      customSiteTitle: 'DirtyHash | Securing Web3 and Crypto',
+      customfavIcon: 'https://dirtyhash.com/favicon.ico',
+    };
+
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec, swaggerUIOptions));
   }
 
   private initializeErrorHandling() {
