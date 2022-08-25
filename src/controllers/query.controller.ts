@@ -7,7 +7,7 @@ export class QueryController {
   public queryService = new QueryService();
 
   @Get('/query/:query')
-  @OpenAPI({ summary: 'Return the result of querying the database' })
+  @OpenAPI({ summary: 'Return the result of fraud detection analysis' })
   @OnNull(204)
   async queryString(@Param('query') query: string) {
     const queryResult = await this.queryService.queryString(query);

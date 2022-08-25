@@ -10,10 +10,10 @@ export class ReportController {
 
   @Post('/report')
   @OpenAPI({
-    summary: 'Report a fraud',
+    summary: 'Report a fraud case',
     responses: {
       201: {
-        description: 'Report created',
+        description: 'Report submitted to DirtyHash',
       },
       400: {
         description: 'Bad request',

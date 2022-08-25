@@ -1,10 +1,10 @@
 import { Controller, Get } from 'routing-controllers';
-import { OpenAPI } from 'routing-controllers-openapi';
+//import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
 export class HealthController {
-  @Get('/heartbeat')
-  @OpenAPI({ summary: 'Return true if app is alive' })
+  //@Get('/heartbeat')
+  //@OpenAPI({ summary: 'Returns true if the DirtyHash service is running' })
   async isAlive() {
     return true;
   }

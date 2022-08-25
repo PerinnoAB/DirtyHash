@@ -86,16 +86,16 @@ class App {
     const spec = routingControllersToSpec(storage, routingControllersOptions, {
       components: {
         schemas,
-        securitySchemes: {
-          basicAuth: {
-            scheme: 'basic',
-            type: 'http',
-          },
-        },
+        // securitySchemes: {
+        //   basicAuth: {
+        //     scheme: 'basic',
+        //     type: 'http',
+        //   },
+        // },
       },
       info: {
-        description: 'Generated with `routing-controllers-openapi`',
-        title: 'A sample API',
+        description: 'REST API documentation for the DirtyHash service',
+        title: 'DirtyHash REST API',
         version: '1.0.0',
       },
     });
