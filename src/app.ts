@@ -94,8 +94,8 @@ class App {
         // },
       },
       info: {
-        description: 'REST API documentation for the DirtyHash service',
-        title: 'DirtyHash REST API',
+        description: 'REST API documentation for the DirtyHash™ service',
+        title: 'DirtyHash™ REST API',
         version: '1.0.0',
       },
     });

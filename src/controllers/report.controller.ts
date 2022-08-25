@@ -13,7 +13,7 @@ export class ReportController {
     summary: 'Report a fraud case',
     responses: {
       201: {
-        description: 'Report submitted to DirtyHash',
+        description: 'Report successfully submitted to DirtyHash™',
       },
       400: {
         description: 'Bad request',
