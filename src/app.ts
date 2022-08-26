@@ -106,7 +106,7 @@ class App {
       customfavIcon: 'https://dirtyhash.com/favicon.ico',
     };
 
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec, swaggerUIOptions));
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec, swaggerUIOptions));
   }
 
   private initializeErrorHandling() {
