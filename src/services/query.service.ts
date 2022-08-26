@@ -1,8 +1,8 @@
 import { validate } from 'multicoin-address-validator';
 import validator from 'validator';
-import extractDomain from 'extract-domain';
 import FirestoreService from './firestore.service';
 import VirustotalService from './virustotal.service';
+import psl from 'psl';
 
 class QueryService {
   public firestoreService = new FirestoreService();
@@ -35,9 +35,9 @@ class QueryService {
         icloud_lowercase: true,
         icloud_remove_subaddress: true,
       });
-    } else if (validator.isURL(stringQuery)) {
+    } else if (psl.isValid(stringQuery)) {
       queryCollection = 'domains';
-      stringQuery = extractDomain(stringQuery);
+      stringQuery = psl.get(stringQuery);
     } else if (stringQuery.startsWith('@')) {
       queryCollection = 'twitter';
     }
