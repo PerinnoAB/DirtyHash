@@ -13,7 +13,13 @@ class VirustotalService {
         },
       });
 
-      if (resp.status === 200) {
+      if (
+        resp.status === 200 &&
+        resp.data &&
+        resp.data.data[0] &&
+        typeof resp.data.data[0].attributes !== 'undefined' &&
+        resp.data.data[0].attributes
+      ) {
         const numHarmless = resp.data.data[0].attributes.last_analysis_stats.harmless;
         const numMalicious = resp.data.data[0].attributes.last_analysis_stats.malicious;
         const numSuspicious = resp.data.data[0].attributes.last_analysis_stats.suspicious;
