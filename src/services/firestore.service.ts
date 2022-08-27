@@ -1,11 +1,13 @@
-import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { applicationDefault, initializeApp, getApps, getApp } from 'firebase-admin/app';
 import { DocumentSnapshot, FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 class FirestoreService {
   // Initialize Firebase
-  app = initializeApp({
-    credential: applicationDefault(),
-  });
+  app = !getApps().length
+    ? initializeApp({
+        credential: applicationDefault(),
+      })
+    : getApp();
 
   db = getFirestore(this.app);
 
