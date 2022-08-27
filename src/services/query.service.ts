@@ -2,7 +2,7 @@ import { validate } from 'multicoin-address-validator';
 import validator from 'validator';
 import FirestoreService from './firestore.service';
 import VirustotalService from './virustotal.service';
-import psl from 'psl';
+import { getDomain } from 'tldts';
 
 class QueryService {
   public firestoreService = new FirestoreService();
@@ -35,11 +35,14 @@ class QueryService {
         icloud_lowercase: true,
         icloud_remove_subaddress: true,
       });
-    } else if (psl.isValid(stringQuery)) {
-      queryCollection = 'domains';
-      stringQuery = psl.get(stringQuery);
     } else if (stringQuery.startsWith('@')) {
       queryCollection = 'twitter';
+    } else {
+      const strDomain = getDomain(stringQuery);
+      if (strDomain !== null) {
+        queryCollection = 'domains';
+        stringQuery = strDomain;
+      }
     }
 
     // Search blacklists first
