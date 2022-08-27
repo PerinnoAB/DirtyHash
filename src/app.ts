@@ -49,7 +49,7 @@ class App {
       morgan(LOG_FORMAT, {
         skip: function (req, res) {
           // log only search and report requests
-          return !req.url.startsWith('/query') || !req.url.startsWith('/report');
+          return !(req.url.startsWith('/query') || req.url.startsWith('/report'));
         },
       }),
     );
