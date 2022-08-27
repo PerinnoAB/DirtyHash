@@ -33,9 +33,7 @@ export class ReportController {
     @BodyParam('email') email?: string,
   ) {
     try {
-      console.log('cat: ', categoryAsString);
       const category = ReportCategory[categoryAsString];
-      console.log('cat enum: ', category);
       if (!category) {
         return null;
       }
