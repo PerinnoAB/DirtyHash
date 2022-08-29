@@ -20,6 +20,8 @@ class QueryService {
       queryCollection = 'btc';
     } else if (validate(stringQuery, 'eth')) {
       queryCollection = 'eth';
+    } else if (validate(stringQuery, 'sol')) {
+      queryCollection = 'sol';
     } else if (validator.isEmail(stringQuery)) {
       queryCollection = 'email';
       stringQuery = validator.normalizeEmail(stringQuery, {
