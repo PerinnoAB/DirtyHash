@@ -4,7 +4,7 @@ class VirustotalService {
   VT_URL = 'https://www.virustotal.com/api/v3/search';
   VT_API_KEY = '28b72c0ce2d0bf2f2c7350895b3b4423b9ee4b31ece41c369c570a202058fc5e';
 
-  public async getVirustotalVerdict(searchString: string): Promise<string> {
+  public async getVirustotalVerdict(searchString: string): Promise<any> {
     try {
       const resp = await axios.get(this.VT_URL, {
         params: { query: searchString },
@@ -25,11 +25,19 @@ class VirustotalService {
         const numSuspicious = resp.data.data[0].attributes.last_analysis_stats.suspicious;
 
         if (numHarmless > 0 && numMalicious === 0 && numSuspicious === 0) {
-          return 'safe';
+          return { result: 'safe', sources: 'VirusTotal Engines' };
         } else if (numHarmless === 0 && numMalicious === 0 && numSuspicious === 0) {
-          return 'caution';
+          return { result: 'caution', sources: '' };
         } else {
-          return 'fraud';
+          const tresult = 'fraud';
+          let tsources = '';
+          const evals = resp.data.data[0].attributes.last_analysis_results;
+          Object.entries(evals).forEach(([key, value]) => {
+            if (value['category'] === 'malicious') {
+              tsources = tsources === '' ? tsources + value['engine_name'] : tsources + ', ' + value['engine_name'];
+            }
+          });
+          return { result: tresult, sources: tsources };
         }
       }
     } catch (err) {

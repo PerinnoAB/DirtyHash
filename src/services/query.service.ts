@@ -85,9 +85,10 @@ class QueryService {
       // In case of domain that is not in our DB, query the Virustotal service
       if (queryCollection === 'domains') {
         console.log('Calling Virustotal for domain: ', stringQuery);
-        analysisResult = await this.virustotalService.getVirustotalVerdict(stringQuery);
+        const vtResult = await this.virustotalService.getVirustotalVerdict(stringQuery);
         analysisMethod = 'VirusTotal';
-        analysisSource = 'VirusTotal';
+        analysisResult = vtResult['result'];
+        analysisSource = vtResult['sources'];
       }
 
       // See if we have stats in 'searches' collection
