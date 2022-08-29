@@ -45,23 +45,23 @@ class QueryService {
       }
     }
 
-    // Search blacklists first
-    let queryValue = await this.firestoreService.getDoc(queryCollection, stringQuery);
+    // Search whitelists first
+    let queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
     if (queryValue.data()) {
-      analysisResult = 'fraud';
+      analysisResult = 'safe';
       analysisSafetyScore = 0;
-      analysisMethod = 'blacklist';
-      userComments = await this.firestoreService.getUserComments(queryCollection, stringQuery);
-      this.firestoreService.updateDocStats(queryCollection, stringQuery);
+      analysisMethod = 'whitelist';
+      userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, stringQuery);
+      this.firestoreService.updateDocStats('wl-' + queryCollection, stringQuery);
     } else {
-      // then search whitelists
-      queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
+      // then search blacklists
+      queryValue = await this.firestoreService.getDoc(queryCollection, stringQuery);
       if (queryValue.data()) {
-        analysisResult = 'safe';
+        analysisResult = 'fraud';
         analysisSafetyScore = 100;
-        analysisMethod = 'whitelist';
-        userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, stringQuery);
-        this.firestoreService.updateDocStats('wl-' + queryCollection, stringQuery);
+        analysisMethod = 'blacklist';
+        userComments = await this.firestoreService.getUserComments(queryCollection, stringQuery);
+        this.firestoreService.updateDocStats(queryCollection, stringQuery);
       }
     }
 

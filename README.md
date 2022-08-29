@@ -10,11 +10,6 @@ f.e.
 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="sa.json"
-```
-
-Additional environment variables.
-
-```
 export PORT=8080
 export LOG_DIR=logs
 export LOG_FORMAT=":remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms"
