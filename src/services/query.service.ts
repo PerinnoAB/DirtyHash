@@ -22,6 +22,8 @@ class QueryService {
       queryCollection = 'eth';
     } else if (validate(stringQuery, 'sol')) {
       queryCollection = 'sol';
+    } else if (validate(stringQuery, 'eos')) {
+      queryCollection = 'eos';
     } else if (validator.isEmail(stringQuery)) {
       queryCollection = 'email';
       stringQuery = validator.normalizeEmail(stringQuery, {
