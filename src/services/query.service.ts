@@ -10,10 +10,11 @@ class QueryService {
 
   public async queryString(stringQuery: string): Promise<any> {
     let queryCollection = 'unknown';
-    let analysisResult = 'caution';
-    let analysisSafetyScore = 50;
-    let analysisMethod = 'ML';
-    let analysisSource = 'dirtyhash';
+    let analysisResult = 'unknown';
+    let analysisRiskScore = 95;
+    let analysisMethod = '--';
+    let analysisSource = 'DirtyHash';
+    let dhResult = {};
     let userComments = [];
 
     if (validate(stringQuery, 'btc')) {
@@ -53,7 +54,7 @@ class QueryService {
     let queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, stringQuery);
     if (queryValue.data()) {
       analysisResult = 'safe';
-      analysisSafetyScore = 0;
+      analysisRiskScore = 5;
       analysisMethod = 'whitelist';
       userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, stringQuery);
       this.firestoreService.updateDocStats('wl-' + queryCollection, stringQuery);
@@ -62,55 +63,48 @@ class QueryService {
       queryValue = await this.firestoreService.getDoc(queryCollection, stringQuery);
       if (queryValue.data()) {
         analysisResult = 'fraud';
-        analysisSafetyScore = 100;
+        analysisRiskScore = 95;
         analysisMethod = 'blacklist';
         userComments = await this.firestoreService.getUserComments(queryCollection, stringQuery);
         this.firestoreService.updateDocStats(queryCollection, stringQuery);
       }
     }
 
-    // If blacklist or whitelist is hit, then return the result
-    const dhResult = queryValue.data();
-    if (queryValue.data()) {
-      if (!dhResult['source']) {
-        dhResult['source'] = 'DirtyHash';
-      }
+    dhResult = queryValue.data();
 
-      return {
-        result: analysisResult,
-        id: queryValue.id,
-        collection: queryCollection,
-        safetyScore: analysisSafetyScore,
-        method: analysisMethod,
-        ...dhResult,
-        comments: userComments,
-      };
-    } else {
+    // if no blacklist or whitelist was hit, then try Virustotal on domain
+    if (!dhResult) {
       // In case of domain that is not in our DB, query the Virustotal service
       if (queryCollection === 'domains') {
         console.log('Calling Virustotal for domain: ', stringQuery);
         const vtResult = await this.virustotalService.getVirustotalVerdict(stringQuery);
         analysisMethod = 'VirusTotal';
         analysisResult = vtResult['result'];
+        analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
         analysisSource = vtResult['sources'];
       }
 
       // See if we have stats in 'searches' collection
       queryValue = await this.firestoreService.getDoc('searches', stringQuery);
-      const dhResult = queryValue.data();
+      dhResult = queryValue.data();
 
       this.firestoreService.updateDocStats('searches', stringQuery);
-      // No blacklist or whitelist match, nor a domain
-      return {
-        result: analysisResult,
-        id: queryValue.id,
-        collection: queryCollection,
-        source: analysisSource,
-        reputationScore: analysisSafetyScore,
-        method: analysisMethod,
-        ...dhResult,
-      };
     }
+
+    if (dhResult && !dhResult['source']) {
+      dhResult['source'] = analysisSource;
+    }
+
+    // Return response
+    return {
+      id: queryValue.id,
+      result: analysisResult,
+      collection: queryCollection,
+      riskScore: analysisRiskScore,
+      method: analysisMethod,
+      ...dhResult,
+      comments: userComments,
+    };
   }
 }
 
