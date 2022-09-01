@@ -3,10 +3,12 @@ import validator from 'validator';
 import FirestoreService from './firestore.service';
 import VirustotalService from './virustotal.service';
 import { getDomain } from 'tldts';
+import MLService from './ml.service';
 
 class QueryService {
   public firestoreService = new FirestoreService();
   public virustotalService = new VirustotalService();
+  public mlService = new MLService();
 
   public async queryString(stringQuery: string): Promise<any> {
     let queryCollection = 'unknown';
@@ -15,10 +17,20 @@ class QueryService {
     let analysisMethod = '--';
     let analysisSource = 'DirtyHash';
     let dhResult = {};
+    let mlData = {};
     let userComments = [];
 
     if (validate(stringQuery, 'btc')) {
       queryCollection = 'btc';
+      mlData = await this.mlService.getMLPredictionBTC(stringQuery);
+
+      if (mlData !== null) {
+        analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+        analysisRiskScore = mlData['risk_score'];
+        if (mlData['risk_score']) {
+          analysisMethod = 'Machine Learning';
+        }
+      }
     } else if (validate(stringQuery, 'eth')) {
       queryCollection = 'eth';
     } else if (validate(stringQuery, 'sol')) {
@@ -103,6 +115,7 @@ class QueryService {
       riskScore: analysisRiskScore,
       method: analysisMethod,
       ...dhResult,
+      mlResult: mlData,
       comments: userComments,
     };
   }
