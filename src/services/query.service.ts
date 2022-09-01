@@ -25,9 +25,12 @@ class QueryService {
       mlData = await this.mlService.getMLPredictionBTC(stringQuery);
 
       if (mlData !== null) {
-        analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
-        analysisRiskScore = mlData['risk_score'];
-        if (mlData['risk_score']) {
+        if (mlData['is_fraud'] === '-1') {
+          analysisResult = 'unknown';
+          analysisRiskScore = 5;
+        } else {
+          analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+          analysisRiskScore = mlData['risk_score'];
           analysisMethod = 'Machine Learning';
         }
       }
