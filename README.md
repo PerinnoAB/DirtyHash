@@ -57,6 +57,8 @@ pm2 set pm2-logrotate:rotateModule false
 pm2 set pm2-logrotate:rotateInterval '0 0 1 * *'
 ```
 
+pm2 logs are in .pm2/logs directory
+
 ## Swagger interface
 
 /api-docs
