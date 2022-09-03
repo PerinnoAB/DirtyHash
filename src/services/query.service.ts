@@ -22,18 +22,6 @@ class QueryService {
 
     if (validate(stringQuery, 'btc')) {
       queryCollection = 'btc';
-      mlData = await this.mlService.getMLPredictionBTC(stringQuery);
-
-      if (mlData !== null) {
-        if (mlData['is_fraud'] === '-1') {
-          analysisResult = 'unknown';
-          analysisRiskScore = 5;
-        } else {
-          analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
-          analysisRiskScore = mlData['risk_score'];
-          analysisMethod = 'Machine Learning';
-        }
-      }
     } else if (validate(stringQuery, 'eth')) {
       queryCollection = 'eth';
     } else if (validate(stringQuery, 'sol')) {
@@ -87,7 +75,7 @@ class QueryService {
 
     dhResult = queryValue.data();
 
-    // if no blacklist or whitelist was hit, then try Virustotal on domain
+    // if no blacklist or whitelist was hit, then try Virustotal on domain and ML on btc
     if (!dhResult) {
       // In case of domain that is not in our DB, query the Virustotal service
       if (queryCollection === 'domains') {
@@ -97,6 +85,19 @@ class QueryService {
         analysisResult = vtResult['result'];
         analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
         analysisSource = vtResult['sources'];
+      } else if (queryCollection === 'btc') {
+        mlData = await this.mlService.getMLPredictionBTC(stringQuery);
+
+        if (mlData !== null) {
+          if (mlData['is_fraud'] === '-1') {
+            analysisResult = 'unknown';
+            analysisRiskScore = 5;
+          } else {
+            analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+            analysisRiskScore = mlData['risk_score'];
+            analysisMethod = 'Machine Learning';
+          }
+        }
       }
 
       // See if we have stats in 'searches' collection
