@@ -93,7 +93,8 @@ class QueryService {
             analysisResult = 'unknown';
             analysisRiskScore = 5;
           } else {
-            analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+            //analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+            analysisResult = 'caution';
             analysisRiskScore = mlData['risk_score'];
             analysisMethod = 'Machine Learning';
           }
