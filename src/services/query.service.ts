@@ -13,7 +13,7 @@ class QueryService {
   public async queryString(stringQuery: string): Promise<any> {
     let queryCollection = 'unknown';
     let analysisResult = 'unknown';
-    let analysisRiskScore = 95;
+    let analysisRiskScore = 0;
     let analysisMethod = '--';
     let analysisSource = 'DirtyHash';
     let dhResult = {};
@@ -99,6 +99,9 @@ class QueryService {
             analysisMethod = 'Machine Learning';
           }
         }
+      } else {
+        //this case is for a search string that we don't support
+        analysisResult = 'unknown';
       }
 
       // See if we have stats in 'searches' collection
