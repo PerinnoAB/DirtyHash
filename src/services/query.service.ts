@@ -26,8 +26,6 @@ class QueryService {
       queryCollection = 'eth';
     } else if (validate(stringQuery, 'sol')) {
       queryCollection = 'sol';
-    } else if (validate(stringQuery, 'eos')) {
-      queryCollection = 'eos';
     } else if (validator.isEmail(stringQuery)) {
       queryCollection = 'email';
       stringQuery = validator.normalizeEmail(stringQuery, {
@@ -45,12 +43,14 @@ class QueryService {
       });
     } else if (stringQuery.startsWith('@')) {
       queryCollection = 'twitter';
-    } else {
+    } else if (getDomain(stringQuery)) {
       const strDomain = getDomain(stringQuery);
       if (strDomain !== null) {
         queryCollection = 'domains';
         stringQuery = strDomain;
       }
+    } else if (validate(stringQuery, 'eos')) {
+      queryCollection = 'eos';
     }
 
     // Search whitelists first
