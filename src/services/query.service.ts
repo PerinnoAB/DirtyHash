@@ -90,8 +90,8 @@ class QueryService {
 
         if (mlData !== null) {
           if (mlData['is_fraud'] === '-1') {
-            analysisResult = 'unknown';
-            analysisRiskScore = 5;
+            analysisResult = 'new';
+            analysisRiskScore = 0;
           } else {
             //analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
             analysisResult = 'caution';
