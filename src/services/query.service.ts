@@ -41,6 +41,8 @@ class QueryService {
         icloud_lowercase: true,
         icloud_remove_subaddress: true,
       });
+    } else if (stringQuery.endsWith('.eth')) {
+      queryCollection = 'eth-domains';
     } else if (stringQuery.startsWith('@')) {
       queryCollection = 'twitter';
     } else if (getDomain(stringQuery)) {
