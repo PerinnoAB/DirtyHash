@@ -83,10 +83,13 @@ class QueryService {
       if (queryCollection === 'domains') {
         console.log('Calling Virustotal for domain: ', stringQuery);
         const vtResult = await this.virustotalService.getVirustotalVerdict(stringQuery);
-        analysisMethod = 'VirusTotal';
-        analysisResult = vtResult['result'];
-        analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
-        analysisSource = vtResult['sources'];
+
+        if (vtResult !== null) {
+          analysisMethod = 'VirusTotal';
+          analysisResult = vtResult['result'];
+          analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
+          analysisSource = vtResult['sources'];
+        }
       } else if (queryCollection === 'btc') {
         mlData = await this.mlService.getMLPredictionBTC(stringQuery);
 
