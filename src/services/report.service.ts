@@ -12,7 +12,7 @@ class ReportService {
     const msg = {
       to: 'amitv@perinno.com', // Change to your recipient
       from: 'contact@perinno.com', // Change to your verified sender
-      subject: 'New user report ' + payload.reportString,
+      subject: 'New user report: ' + payload.reportString,
       text: 'report',
       html:
         '<p>' +
