@@ -41,6 +41,18 @@ class ReportService {
         console.error('Error sending report email', error);
       });
 
+    // Check the string reported and act to the relevant collections
+    if (payload.reportString !== null) {
+    }
+
+    // If report contains URL
+    if (payload.url !== null) {
+    }
+
+    // If report abuser details
+    if (payload.abuser !== null) {
+    }
+
     return this.firestoreService.addDoc(this.reportsCollectionName, payload);
   }
 }

@@ -1,3 +1,7 @@
+import { validate } from 'multicoin-address-validator';
+import validator from 'validator';
+import { getDomain } from 'tldts';
+
 /**
  * @method isEmpty
  * @param {String | Number | Object} value
@@ -16,4 +20,52 @@ export const isEmpty = (value: string | number | object): boolean => {
   } else {
     return false;
   }
+};
+
+/**
+ * @method getCollection
+ * @param {String} searchString
+ * @returns {String, String} collectionName, transformedString
+ * @description parses a string to obtain the database collection, string should already be checked with isEmpty()
+ */
+export const getCollection = (searchString: string): [string, string] => {
+  let collectionName = 'unknown';
+  let transformedString = searchString;
+
+  if (validate(searchString, 'btc')) {
+    collectionName = 'btc';
+  } else if (validate(searchString, 'eth')) {
+    collectionName = 'eth';
+  } else if (validate(searchString, 'sol')) {
+    collectionName = 'sol';
+  } else if (validator.isEmail(searchString)) {
+    collectionName = 'email';
+    transformedString = validator.normalizeEmail(searchString, {
+      all_lowercase: true,
+      gmail_lowercase: true,
+      gmail_remove_dots: true,
+      gmail_remove_subaddress: true,
+      gmail_convert_googlemaildotcom: true,
+      outlookdotcom_lowercase: true,
+      outlookdotcom_remove_subaddress: true,
+      yahoo_lowercase: true,
+      yahoo_remove_subaddress: true,
+      icloud_lowercase: true,
+      icloud_remove_subaddress: true,
+    });
+  } else if (searchString.endsWith('.eth')) {
+    collectionName = 'eth-domains';
+  } else if (searchString.startsWith('@')) {
+    collectionName = 'twitter';
+  } else if (getDomain(searchString)) {
+    const strDomain = getDomain(searchString);
+    if (strDomain !== null) {
+      collectionName = 'domains';
+      transformedString = strDomain;
+    }
+  } else if (validate(searchString, 'eos')) {
+    collectionName = 'eos';
+  }
+
+  return [collectionName, transformedString];
 };
