@@ -24,16 +24,25 @@ class FirestoreService {
     return userComments;
   }
 
+  public async addUserComment(collectionName: string, docName: string, userComment: any) {
+    await this.db.collection(collectionName).doc(docName).collection('user-comments').add(userComment);
+  }
+
   public async updateDocStats(collectionName: string, docName: string) {
     const dbRef = this.db.collection(collectionName).doc(docName);
     await dbRef.set({ 'times-searched': FieldValue.increment(1), 'last-searched': FieldValue.serverTimestamp() }, { merge: true });
+  }
+
+  public async updateReports(collectionName: string, docName: string) {
+    const dbRef = this.db.collection(collectionName).doc(docName);
+    await dbRef.set({ 'user-reports': FieldValue.increment(1) }, { merge: true });
   }
 
   public async setDoc(collectionName: string, docName: string, payload: any): Promise<FirebaseFirestore.WriteResult> {
     return await this.db
       .collection(collectionName)
       .doc(docName)
-      .set(JSON.parse(JSON.stringify(payload)));
+      .set(JSON.parse(JSON.stringify(payload)), { merge: true });
   }
 
   public async addDoc(collectionName: string, payload: any) {
