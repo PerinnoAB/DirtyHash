@@ -72,6 +72,20 @@ class QueryService {
             analysisMethod = 'Machine Learning';
           }
         }
+      } else if (queryCollection === 'eth') {
+        mlData = await this.mlService.getMLPredictionETH(transformedString);
+
+        if (mlData !== null) {
+          if (mlData['is_fraud'] === '-1') {
+            analysisResult = 'new';
+            analysisRiskScore = 0;
+          } else {
+            //analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
+            analysisResult = 'caution';
+            analysisRiskScore = mlData['risk_score'];
+            analysisMethod = 'Machine Learning';
+          }
+        }
       } else {
         //this case is for a search string that we don't support
         analysisResult = 'unknown';
