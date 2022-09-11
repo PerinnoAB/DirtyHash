@@ -9,6 +9,7 @@ class ReportService {
   reportsCollectionName = 'reports';
 
   public async createReport(payload: Report): Promise<any> {
+    // send email to DH Ops team
     const msg = {
       to: 'contact@perinno.com', // Change to your recipient
       from: 'contact@perinno.com', // Change to your verified sender
@@ -17,17 +18,17 @@ class ReportService {
       html:
         '<p>Abuser: ' +
         payload.abuser +
-        ' Category: ' +
+        '</p><p>Category: ' +
         payload.category +
-        ' Description: ' +
+        ' </p><p>Description: ' +
         payload.description +
-        ' Email: ' +
+        ' </p><p>Email: ' +
         payload.email +
-        ' Name: ' +
+        ' </p><p>Name: ' +
         payload.name +
-        ' Other: ' +
+        ' </p><p>Other: ' +
         payload.otherCategory +
-        ' Url: ' +
+        ' </p><p>Url: ' +
         payload.url +
         '</p>',
     };
