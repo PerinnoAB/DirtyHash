@@ -36,6 +36,7 @@ export const getCollection = (searchString: string): [string, string] => {
     collectionName = 'btc';
   } else if (validate(searchString, 'eth')) {
     collectionName = 'eth';
+    transformedString = searchString.toLowerCase();
   } else if (validate(searchString, 'sol')) {
     collectionName = 'sol';
   } else if (validator.isEmail(searchString)) {
