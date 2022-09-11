@@ -10,24 +10,24 @@ class ReportService {
 
   public async createReport(payload: Report): Promise<any> {
     const msg = {
-      to: 'amitv@perinno.com', // Change to your recipient
+      to: 'contact@perinno.com', // Change to your recipient
       from: 'contact@perinno.com', // Change to your verified sender
       subject: 'New user report: ' + payload.reportString,
       text: 'report',
       html:
-        '<p>' +
+        '<p>Abuser: ' +
         payload.abuser +
-        ' ' +
+        ' Category: ' +
         payload.category +
-        ' ' +
+        ' Description: ' +
         payload.description +
-        ' ' +
+        ' Email: ' +
         payload.email +
-        ' ' +
+        ' Name: ' +
         payload.name +
-        ' ' +
+        ' Other: ' +
         payload.otherCategory +
-        ' ' +
+        ' Url: ' +
         payload.url +
         '</p>',
     };
