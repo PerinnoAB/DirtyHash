@@ -12,7 +12,7 @@ f.e.
 export GOOGLE_APPLICATION_CREDENTIALS="sa.json"
 export PORT=8080
 export LOG_DIR=logs
-export ML_SERVER="http://localhost:8081"
+export ML_SERVER="http://10.128.0.10:8081"
 export LOG_FORMAT=":remote-addr :remote-user [:date[clf]] :method :url HTTP/:http-version :status :res[content-length] - :response-time ms"
 ```
 
