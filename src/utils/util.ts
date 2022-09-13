@@ -61,8 +61,15 @@ export const getCollection = (searchString: string): [string, string] => {
   } else if (getDomain(searchString)) {
     const strDomain = getDomain(searchString);
     if (strDomain !== null) {
-      collectionName = 'domains';
-      transformedString = strDomain;
+      if (strDomain === 'twitter.com' && searchString.length > 12) {
+        collectionName = 'twitter';
+        searchString = searchString.slice(searchString.indexOf('twitter.com/') + 12);
+        transformedString = '@' + searchString.split('/')[0];
+        console.log('final', transformedString);
+      } else {
+        collectionName = 'domains';
+        transformedString = strDomain;
+      }
     }
   } else if (validate(searchString, 'eos')) {
     collectionName = 'eos';
