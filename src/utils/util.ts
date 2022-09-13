@@ -71,6 +71,9 @@ export const getCollection = (searchString: string): [string, string] => {
             transformedString = '@' + searchString.split('/')[0];
             console.log('Twitter parsed handle: ', transformedString);
           }
+        } else {
+          collectionName = 'domains';
+          transformedString = strDomain;
         }
       } else {
         collectionName = 'domains';
