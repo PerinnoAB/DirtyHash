@@ -22,6 +22,7 @@ class QueryService {
     }
 
     stringQuery = decodeURIComponent(stringQuery);
+    console.log('Decoded string: ', stringQuery);
     const [queryCollection, transformedString] = getCollection(stringQuery);
 
     // Search whitelists first

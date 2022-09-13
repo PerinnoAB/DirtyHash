@@ -61,11 +61,13 @@ export const getCollection = (searchString: string): [string, string] => {
   } else if (getDomain(searchString)) {
     const strDomain = getDomain(searchString);
     if (strDomain !== null) {
-      if (strDomain === 'twitter.com' && searchString.length > 12) {
-        collectionName = 'twitter';
+      if (strDomain === 'twitter.com') {
         searchString = searchString.slice(searchString.indexOf('twitter.com/') + 12);
-        transformedString = '@' + searchString.split('/')[0];
-        console.log('final', transformedString);
+        if (searchString.length > 0) {
+          collectionName = 'twitter';
+          transformedString = '@' + searchString.split('/')[0];
+          console.log('Twitter parsed handle: ', transformedString);
+        }
       } else {
         collectionName = 'domains';
         transformedString = strDomain;
