@@ -25,7 +25,7 @@ class QueryService {
         break;
     }
 
-    if (mlData !== null) {
+    if (!isEmpty(mlData)) {
       if (mlData['is_fraud'] === '-1') {
         analysisResult = 'new';
         analysisRiskScore = 0;
@@ -73,13 +73,17 @@ class QueryService {
         analysisMethod = 'blacklist';
         userComments = await this.firestoreService.getUserComments(queryCollection, transformedString);
         this.firestoreService.updateDocStats(queryCollection, transformedString);
+
+        // for blacklisted eth and btc, additionally call ML service
+        if (queryCollection === 'btc' || queryCollection === 'eth') {
+          // also call ML service
+          const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
+          mlData = mlDataML;
+          analysisMethod += ' | ' + analysisMethodML;
+          // overwrite risk score only if ML indicates more than 10%
+          analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
+        }
       }
-      // also call ML service
-      const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
-      mlData = mlDataML;
-      analysisMethod += ' | ' + analysisMethodML;
-      // overwrite risk score only if ML indicates more than 10%
-      analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
     }
 
     dhResult = queryValue.data();
