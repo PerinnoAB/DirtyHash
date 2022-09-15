@@ -77,7 +77,7 @@ class QueryService {
       // also call ML service
       const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
       mlData = mlDataML;
-      analysisMethod += '|' + analysisMethodML;
+      analysisMethod += ' | ' + analysisMethodML;
       // overwrite risk score only if ML indicates more than 10%
       analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
     }
