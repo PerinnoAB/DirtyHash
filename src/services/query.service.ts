@@ -8,6 +8,37 @@ class QueryService {
   public virustotalService = new VirustotalService();
   public mlService = new MLService();
 
+  private async getMLPrediction(address: string, chain: string): Promise<[string, number, string, any]> {
+    let analysisResult = 'unknown';
+    let analysisRiskScore = 0;
+    let analysisMethod = '--';
+    let mlData = {};
+
+    switch (chain) {
+      case 'btc':
+        mlData = await this.mlService.getMLPredictionBTC(address);
+        break;
+      case 'eth':
+        mlData = await this.mlService.getMLPredictionETH(address);
+        break;
+      default:
+        break;
+    }
+
+    if (mlData !== null) {
+      if (mlData['is_fraud'] === '-1') {
+        analysisResult = 'new';
+        analysisRiskScore = 0;
+      } else {
+        analysisResult = 'caution';
+        analysisRiskScore = mlData['risk_score'];
+        analysisMethod = 'Machine Learning';
+      }
+    }
+
+    return [analysisResult, analysisRiskScore, analysisMethod, mlData];
+  }
+
   public async queryString(stringQuery: string): Promise<any> {
     let analysisResult = 'unknown';
     let analysisRiskScore = 0;
@@ -43,6 +74,12 @@ class QueryService {
         userComments = await this.firestoreService.getUserComments(queryCollection, transformedString);
         this.firestoreService.updateDocStats(queryCollection, transformedString);
       }
+      // also call ML service
+      const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
+      mlData = mlDataML;
+      analysisMethod += '|' + analysisMethodML;
+      // overwrite risk score only if ML indicates more than 10%
+      analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
     }
 
     dhResult = queryValue.data();
@@ -60,37 +97,10 @@ class QueryService {
           analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
           analysisSource = vtResult['sources'];
         }
-      } else if (queryCollection === 'btc') {
-        mlData = await this.mlService.getMLPredictionBTC(transformedString);
-
-        if (mlData !== null) {
-          if (mlData['is_fraud'] === '-1') {
-            analysisResult = 'new';
-            analysisRiskScore = 0;
-          } else {
-            //analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
-            analysisResult = 'caution';
-            analysisRiskScore = mlData['risk_score'];
-            analysisMethod = 'Machine Learning';
-          }
-        }
-      } else if (queryCollection === 'eth') {
-        mlData = await this.mlService.getMLPredictionETH(transformedString);
-
-        if (mlData !== null) {
-          if (mlData['is_fraud'] === '-1') {
-            analysisResult = 'new';
-            analysisRiskScore = 0;
-          } else {
-            //analysisResult = mlData['is_fraud'] === '1' ? 'fraud' : 'safe';
-            analysisResult = 'caution';
-            analysisRiskScore = mlData['risk_score'];
-            analysisMethod = 'Machine Learning';
-          }
-        }
-      } else {
-        //this case is for a search string that we don't support
-        analysisResult = 'unknown';
+      }
+      // else analyze with ML service
+      else {
+        [analysisResult, analysisRiskScore, analysisMethod, mlData] = await this.getMLPrediction(transformedString, queryCollection);
       }
 
       // See if we have stats in 'searches' collection
