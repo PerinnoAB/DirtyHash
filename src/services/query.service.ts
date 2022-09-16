@@ -53,8 +53,8 @@ class QueryService {
     }
 
     stringQuery = decodeURIComponent(stringQuery);
-    console.log('Decoded string: ', stringQuery);
     const [queryCollection, transformedString] = getCollection(stringQuery);
+    console.log('Collection: ', queryCollection, ' Transformed-string: ', transformedString);
 
     // Search whitelists first
     let queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, transformedString);

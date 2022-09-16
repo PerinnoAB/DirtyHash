@@ -17,9 +17,17 @@ class FirestoreService {
 
   public async getUserComments(collectionName: string, docName: string): Promise<any[]> {
     const userComments = [];
-    const userCommentDocs = await this.db.collection(collectionName).doc(docName).collection('user-comments').get();
+    const userCommentDocs = await this.db
+      .collection(collectionName)
+      .doc(docName)
+      .collection('user-comments')
+      .orderBy('timestamp', 'desc')
+      .limit(5)
+      .get();
     userCommentDocs.forEach(doc => {
-      userComments.push(doc.data());
+      const doc_data = doc.data();
+      delete doc_data['email'];
+      userComments.push(doc_data);
     });
     return userComments;
   }
