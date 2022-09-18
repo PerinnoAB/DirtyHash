@@ -2,6 +2,7 @@ import { Report } from '@/interfaces/report.interface';
 import { getCollection, isEmpty } from '@/utils/util';
 import FirestoreService from './firestore.service';
 import validator from 'validator';
+import { isEmail, isURL } from 'class-validator';
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey('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');
@@ -10,7 +11,33 @@ class ReportService {
   public firestoreService = new FirestoreService();
   reportsCollectionName = 'reports';
 
-  public async createReport(payload: Report): Promise<any> {
+  private sendUserEmail(payload: Report) {
+    if (isEmpty(payload.email)) return;
+
+    if (isEmail(payload.email)) {
+      const msg = {
+        to: payload.email,
+        from: 'contact@perinno.com',
+        bcc: 'contact@perinno.com',
+        templateId: 'd-ad72b0f4e4c145daa1d658c664bbe2a1',
+        dynamicTemplateData: {
+          reporterName: payload.name,
+          reportString: payload.reportString,
+        },
+      };
+
+      sgMail
+        .send(msg)
+        .then(() => {
+          // console.log('Email sent');
+        })
+        .catch(error => {
+          console.error('Error sending report email', error);
+        });
+    }
+  }
+
+  private sendOpsEmail(payload: Report) {
     // send email to DH Ops team
     const msg = {
       to: 'contact@perinno.com', // Change to your recipient
@@ -42,6 +69,10 @@ class ReportService {
       .catch(error => {
         console.error('Error sending report email', error);
       });
+  }
+
+  public async createReport(payload: Report): Promise<any> {
+    this.sendOpsEmail(payload);
 
     // Check the string reported and act to the relevant collections
     if (!isEmpty(payload.reportString)) {
@@ -59,6 +90,8 @@ class ReportService {
         this.reportEntity(payload.abuser, payload);
       }
     }
+
+    this.sendUserEmail(payload);
 
     return this.firestoreService.addDoc(this.reportsCollectionName, payload);
   }
@@ -83,7 +116,7 @@ class ReportService {
     if (!isEmpty(payload.abuser)) {
       reportData['abuser'] = payload.abuser;
     }
-    if (!isEmpty(payload.url)) {
+    if (!isEmpty(payload.url) && isURL(payload.url)) {
       reportData['url'] = payload.url;
     }
 
