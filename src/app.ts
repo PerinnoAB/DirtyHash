@@ -95,8 +95,9 @@ class App {
         // },
       },
       info: {
-        description: 'REST API documentation',
-        title: 'DirtyHash™ API',
+        description:
+          'Analyze suspicious wallet addresses, domains, NFTs with machine learning to detect frauds and scams, share them with the community.',
+        title: 'DirtyHash™ REST API Documentation',
         version: '1.0.0',
       },
     });
