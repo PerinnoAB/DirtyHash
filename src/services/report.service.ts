@@ -15,9 +15,10 @@ import { getCollection, isEmpty } from '@/utils/util';
 import FirestoreService from './firestore.service';
 import validator from 'validator';
 import { isEmail, isURL } from 'class-validator';
+import { SENDGRID_API_KEY } from '@config';
 
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
+sgMail.setApiKey(SENDGRID_API_KEY);
 
 class ReportService {
   public firestoreService = new FirestoreService();
