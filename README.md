@@ -4,7 +4,7 @@ DirtyHash is a service to defend against Web3 and Crypto frauds, phishing, ranso
 
 ## Setup
 
-For tthe DirtyHash server, set up the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the Firebase service-account-file.json, where the database is maintained.
+For the DirtyHash server, set up the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the Firebase service-account-file.json, where the database is maintained.
 
 e.g.
 
