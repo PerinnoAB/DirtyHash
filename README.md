@@ -52,7 +52,7 @@ pm2 restart all --update-env
 
 pm2 config
 
-````
+```
 pm2 install pm2-logrotate
 pm2 set pm2-logrotate:max_size 1G
 pm2 set pm2-logrotate:compress true
