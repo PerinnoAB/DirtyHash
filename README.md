@@ -17,6 +17,8 @@ export GOOGLE_APPLICATION_CREDENTIALS="sa.json"
 export PORT=8080
 export LOG_DIR=logs
 export ML_SERVER="http://10.128.0.10:8081"
+export VT_URL='VT_URL'
+export VT_API_KEY='VT_API_KEY'
 export LOG_FORMAT=":remote-addr :remote-user [:date[clf]] :method :url HTTP/:http-version :status :res[content-length] - :response-time ms"
 ```
 
@@ -64,4 +66,3 @@ pm2 set pm2-logrotate:rotateInterval '0 0 1 * *'
 ## License
 
 [Apache License 2.0](LICENSE)
-

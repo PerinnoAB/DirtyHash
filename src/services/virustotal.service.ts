@@ -10,18 +10,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+import { VT_API_KEY, VT_URL } from '@config';
 const axios = require('axios').default;
 
 class VirustotalService {
-  VT_URL = 'https://www.virustotal.com/api/v3/search';
-  VT_API_KEY = '28b72c0ce2d0bf2f2c7350895b3b4423b9ee4b31ece41c369c570a202058fc5e';
-
   public async getVirustotalVerdict(searchString: string): Promise<any> {
     try {
-      const resp = await axios.get(this.VT_URL, {
+      const resp = await axios.get(VT_URL, {
         params: { query: searchString },
         headers: {
-          'x-apikey': this.VT_API_KEY,
+          'x-apikey': VT_API_KEY,
         },
       });
 
