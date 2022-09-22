@@ -2,7 +2,7 @@
   <img src="https://dirtyhash.com/assets/img/dh_logo.png">
 </div>
 
-# Dirtyhash
+# [DirtyHash](https://dirtyhash.com)
 
 [DirtyHash](https://dirtyhash.com) is a security project to defend against Web3 and Crypto frauds, phishing, ransomware, blackmailers and money laundering. With this you can analyze suspicious entities (wallet addresses, smart contracts, web3 and regular domains, NFTs, social media handles, bank accounts, etc.) to detect frauds and scams. You can report any scams and also share them with the community.
 
