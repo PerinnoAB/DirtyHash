@@ -1,3 +1,15 @@
+/* Copyright 2022 Perinno AB. All Rights Reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==============================================================================*/
+
 import { hash } from 'bcrypt';
 import { CreateUserDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
@@ -21,7 +33,7 @@ class UserService {
   }
 
   public async createUser(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
+    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
     const findUser: User = this.users.find(user => user.email === userData.email);
     if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
@@ -34,7 +46,7 @@ class UserService {
   }
 
   public async updateUser(userId: number, userData: CreateUserDto): Promise<User[]> {
-    if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
+    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
     const findUser: User = this.users.find(user => user.id === userId);
     if (!findUser) throw new HttpException(409, "User doesn't exist");
