@@ -1,12 +1,12 @@
 # Dirtyhash
 
-Dirtyhash app
+DirtyHash is a service to defend against Web3 and Crypto frauds, phishing, ransomware, blackmailers and money laundering. With this you can analyze suspicious entities (wallet addresses, smart contracts, web3 and regular domains, NFTs, social media handles, bank accounts, etc.) to detect frauds and scams. You can report any scams and also share them with the community.
 
 ## Setup
 
-In order for the app to work remember to set up the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the firebase service-account-file.json.
+For tthe DirtyHash server, set up the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the Firebase service-account-file.json, where the database is maintained.
 
-f.e.
+e.g.
 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="sa.json"
@@ -61,5 +61,5 @@ pm2 logs are in .pm2/logs directory
 
 ## Swagger interface
 
-/api-docs
+/api/docs
 ````
