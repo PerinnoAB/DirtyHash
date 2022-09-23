@@ -15,7 +15,7 @@ import { getCollection, isEmpty } from '@/utils/util';
 import FirestoreService from './firestore.service';
 import validator from 'validator';
 import { isEmail, isURL } from 'class-validator';
-import { SENDGRID_API_KEY } from '@config';
+import { SENDGRID_API_KEY, SENDGRID_TEMPLATE_ID, REPORT_EMAIL } from '@config';
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(SENDGRID_API_KEY);
@@ -30,9 +30,9 @@ class ReportService {
     if (isEmail(payload.email)) {
       const msg = {
         to: payload.email,
-        from: 'contact@perinno.com',
-        bcc: 'contact@perinno.com',
-        templateId: 'd-ad72b0f4e4c145daa1d658c664bbe2a1',
+        from: REPORT_EMAIL,
+        bcc: REPORT_EMAIL,
+        templateId: SENDGRID_TEMPLATE_ID,
         dynamicTemplateData: {
           reporterName: payload.name,
           reportString: payload.reportString,
