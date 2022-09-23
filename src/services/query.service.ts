@@ -126,6 +126,7 @@ class QueryService {
       this.firestoreService.updateDocStats('searches', transformedString);
     }
 
+    // if source is empty, return D# as the source
     if (dhResult && !dhResult['source']) {
       dhResult['source'] = analysisSource;
     }

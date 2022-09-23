@@ -13,6 +13,9 @@ limitations under the License.
 const axios = require('axios').default;
 import { ML_SERVER } from '@config';
 
+// set default reponse timeout to 10 seconds
+axios.defaults.timeout = 10 * 1000;
+
 class MLService {
   ML_SERVER_URL_BTC = ML_SERVER + '/classify-btc';
   ML_SERVER_URL_ETH = ML_SERVER + '/classify-eth';
