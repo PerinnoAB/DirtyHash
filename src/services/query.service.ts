@@ -132,7 +132,7 @@ class QueryService {
     }
 
     // Return response
-    return {
+    const response = {
       id: queryValue.id,
       result: analysisResult,
       collection: queryCollection,
@@ -142,6 +142,9 @@ class QueryService {
       mlResult: mlData,
       comments: userComments,
     };
+    console.log('Response: ', response);
+
+    return response;
   }
 }
 

@@ -85,6 +85,7 @@ class ReportService {
   }
 
   public async createReport(payload: Report): Promise<any> {
+    console.log('Report payload: ', payload);
     this.sendOpsEmail(payload);
 
     // Check the string reported and act to the relevant collections
