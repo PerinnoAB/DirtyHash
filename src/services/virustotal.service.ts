@@ -14,7 +14,7 @@ import { VT_API_KEY, VT_URL } from '@config';
 const axios = require('axios').default;
 
 // set default reponse timeout to 10 seconds
-axios.defaults.timeout = 10 * 1000;
+axios.defaults.timeout = 20 * 1000;
 
 class VirustotalService {
   public async getVirustotalVerdict(searchString: string): Promise<any> {
