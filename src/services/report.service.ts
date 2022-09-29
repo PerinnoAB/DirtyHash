@@ -125,6 +125,7 @@ class ReportService {
     // user reports will always be incremented
     reportData['first-reported'] = new Date().getTime();
     reportData['category'] = payload.category;
+    reportData['subcategory'] = payload.otherCategory;
     reportData['source'] = 'DirtyHash';
 
     if (!isEmpty(payload.abuser)) {
