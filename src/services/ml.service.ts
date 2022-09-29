@@ -14,7 +14,7 @@ const axios = require('axios').default;
 import { ML_SERVER } from '@config';
 
 // set default reponse timeout to 10 seconds
-axios.defaults.timeout = 20 * 1000;
+axios.defaults.timeout = 30 * 1000;
 
 class MLService {
   ML_SERVER_URL_BTC = ML_SERVER + '/classify-btc';
