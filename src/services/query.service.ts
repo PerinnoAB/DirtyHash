@@ -57,6 +57,7 @@ class QueryService {
     let analysisMethod = '--';
     let analysisSource = 'DirtyHash';
     let dhResult = {};
+    let searchStatsResult = {};
     let mlData = {};
     let userComments = [];
 
@@ -102,6 +103,7 @@ class QueryService {
 
     // if no blacklist or whitelist was hit, then try Virustotal on domain and ML on btc
     if (!dhResult) {
+      dhResult = {};
       // In case of domain that is not in our DB, query the Virustotal service
       if (queryCollection === 'domains') {
         console.log('Calling Virustotal for domain: ', transformedString);
@@ -113,6 +115,14 @@ class QueryService {
           analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
           analysisSource = vtResult['sources'];
         }
+      } else if (queryCollection === 'twitter') {
+        const twitter_analysis = await this.mlService.getAnalysisTwitter(transformedString);
+        if (!isEmpty(twitter_analysis)) {
+          analysisMethod = twitter_analysis['method'];
+          analysisResult = 'caution';
+          analysisRiskScore = twitter_analysis['risk_score'];
+          dhResult['category'] = twitter_analysis['category'];
+        }
       }
       // else analyze with ML service
       else {
@@ -121,7 +131,7 @@ class QueryService {
 
       // See if we have stats in 'searches' collection
       queryValue = await this.firestoreService.getDoc('searches', transformedString);
-      dhResult = queryValue.data();
+      searchStatsResult = queryValue.data();
 
       this.firestoreService.updateDocStats('searches', transformedString);
     }
@@ -139,6 +149,7 @@ class QueryService {
       riskScore: analysisRiskScore,
       method: analysisMethod,
       ...dhResult,
+      ...searchStatsResult,
       mlResult: mlData,
       comments: userComments,
     };

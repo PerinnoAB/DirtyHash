@@ -19,6 +19,22 @@ axios.defaults.timeout = 30 * 1000;
 class MLService {
   ML_SERVER_URL_BTC = ML_SERVER + '/classify-btc';
   ML_SERVER_URL_ETH = ML_SERVER + '/classify-eth';
+  ML_SERVER_URL_TWITTER = ML_SERVER + '/analyze-twitter';
+
+  public async getAnalysisTwitter(searchString: string): Promise<any> {
+    try {
+      const resp = await axios.get(this.ML_SERVER_URL_TWITTER, {
+        params: { handle: searchString },
+      });
+
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    } catch (err) {
+      console.error('ERROR: Failed to call Twitter Analysis API', err);
+    }
+    return null;
+  }
 
   public async getMLPredictionBTC(searchString: string): Promise<any> {
     try {
