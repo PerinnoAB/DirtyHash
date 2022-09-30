@@ -22,7 +22,7 @@ export VT_API_KEY='VT_API_KEY'
 export LOG_FORMAT=":remote-addr :remote-user [:date[clf]] :method :url HTTP/:http-version :status :res[content-length] - :response-time ms"
 export SENDGRID_API_KEY = 'SENDGRID_API_KEY'
 export SENDGRID_TEMPLATE_ID = 'SENDGRID_TEMPLATE_ID'
-REPORT_EMAIL = 'EMAIL_TO_RECEIVE_REPORT'
+export REPORT_EMAIL = 'EMAIL_TO_RECEIVE_REPORT'
 ```
 
 ## Installation
