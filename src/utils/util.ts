@@ -71,7 +71,7 @@ export const getCollection = (searchString: string): [string, string] => {
     transformedString = searchString.toLowerCase();
   } else if (searchString.startsWith('@')) {
     collectionName = 'twitter';
-    transformedString = searchString.toLowerCase();
+    transformedString = searchString.substring(1).toLowerCase();
   } else if (getDomain(searchString)) {
     const strDomain = getDomain(searchString);
     if (strDomain !== null) {
@@ -96,6 +96,8 @@ export const getCollection = (searchString: string): [string, string] => {
     }
   } else if (validate(searchString, 'eos')) {
     collectionName = 'eos';
+  } else if (searchString.length <= 15) {
+    collectionName = 'twitter';
   }
 
   return [collectionName, transformedString];
