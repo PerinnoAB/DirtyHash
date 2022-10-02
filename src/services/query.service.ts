@@ -96,6 +96,25 @@ class QueryService {
           // overwrite risk score only if ML indicates more than 10%
           analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
         }
+      } else {
+        // search greylists
+        queryValue = await this.firestoreService.getDoc('gl-' + queryCollection, transformedString);
+        if (queryValue.data()) {
+          analysisResult = 'fraud';
+          analysisRiskScore = 80;
+          analysisMethod = 'Transaction tracing';
+          this.firestoreService.updateDocStats(queryCollection, transformedString);
+
+          // for blacklisted eth and btc, additionally call ML service
+          if (queryCollection === 'btc' || queryCollection === 'eth') {
+            // also call ML service
+            const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
+            mlData = mlDataML;
+            analysisMethod += ' | ' + analysisMethodML;
+            // overwrite risk score only if ML indicates more than 10%
+            analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
+          }
+        }
       }
     }
 
