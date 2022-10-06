@@ -105,7 +105,7 @@ class QueryService {
           analysisMethod = 'Transaction tracing';
           this.firestoreService.updateDocStats(queryCollection, transformedString);
 
-          // for blacklisted eth and btc, additionally call ML service
+          // for greylisted eth and btc, additionally call ML service
           if (queryCollection === 'btc' || queryCollection === 'eth') {
             // also call ML service
             const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
