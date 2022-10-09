@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://dirtyhash.com/assets/img/dh_logo.png" height="128">
+  <img src="https://dirtyhash.com/assets/img/dh_logo.png" height="100">
 </div>
 
 # [DirtyHash](https://dirtyhash.com)
