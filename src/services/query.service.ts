@@ -141,6 +141,7 @@ class QueryService {
           analysisResult = 'caution';
           analysisRiskScore = twitter_analysis['risk_score'];
           dhResult['category'] = twitter_analysis['category'];
+          dhResult['genuine_handle'] = twitter_analysis['genuine_handle'];
         }
       }
       // else analyze with ML service
