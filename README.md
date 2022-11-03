@@ -8,6 +8,11 @@
 
 ## Setup
 
+Clone the project
+```
+git clone https://github.com/PerinnoAB/DirtyHash.git
+```
+
 For the DirtyHash server, set up the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the Firebase service-account-file.json, where the database is maintained.
 
 e.g.
