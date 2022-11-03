@@ -61,7 +61,7 @@ class MLService {
         return resp.data;
       }
     } catch (err) {
-      console.error('ERROR: Failed to call ML BTC API', err);
+      console.error('ERROR: Failed to call ML ETH API', err);
     }
     return null;
   }
