@@ -11,7 +11,7 @@
 Clone the project and set up the machine (in the following instructions a Ubuntu server is assumed).
 ```
 sudo apt-get install nodejs npm
-sudo apt-get install nodejs pm2
+sudo npm install pm2 -g
 sudo apt-get install git-all
 git clone https://github.com/PerinnoAB/DirtyHash.git
 ```
