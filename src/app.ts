@@ -121,6 +121,7 @@ class App {
     };
 
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec, swaggerUIOptions));
+    this.app.use('/', swaggerUi.serve, swaggerUi.setup(spec, swaggerUIOptions));
   }
 
   private initializeErrorHandling() {
