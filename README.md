@@ -9,6 +9,7 @@
 ## Setup
 
 Clone the project and set up the machine (in the following instructions a Ubuntu server is assumed).
+
 ```
 sudo apt-get install nodejs npm
 sudo npm install pm2 -g
@@ -56,6 +57,7 @@ or with pm2
 
 ```
 pm2 start npm --name dh-server -- start
+pm2 save
 ```
 
 pm2 restart with updating env variables
