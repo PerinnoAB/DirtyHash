@@ -51,6 +51,10 @@ export const getCollection = (searchString: string): [string, string] => {
     transformedString = searchString.toLowerCase();
   } else if (validate(searchString, 'sol')) {
     collectionName = 'sol';
+  } else if (validate(searchString, 'trx')) {
+    collectionName = 'trx';
+  } else if (validate(searchString, 'bnb')) {
+    collectionName = 'bnb';
   } else if (validator.isEmail(searchString)) {
     collectionName = 'email';
     transformedString = validator.normalizeEmail(searchString, {
