@@ -37,6 +37,7 @@ export REPORT_EMAIL = 'EMAIL_TO_RECEIVE_REPORT'
 
 ```
 npm install  --legacy-peer-deps
+npm install --force
 ```
 
 ## Running the app in dev environment
