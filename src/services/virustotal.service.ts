@@ -13,8 +13,8 @@ limitations under the License.
 import { VT_API_KEY, VT_URL } from '@config';
 const axios = require('axios').default;
 
-// set default reponse timeout to 10 seconds
-axios.defaults.timeout = 30 * 1000;
+// set default reponse timeout
+axios.defaults.timeout = 60 * 1000;
 
 class VirustotalService {
   public async getVirustotalVerdict(searchString: string): Promise<any> {
