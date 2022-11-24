@@ -94,7 +94,7 @@ class QueryService {
           mlData = mlDataML;
           analysisMethod += ' | ' + analysisMethodML;
           // overwrite risk score only if ML indicates more than 10%
-          analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
+          analysisRiskScore = analysisRiskScoreML > 30 ? analysisRiskScoreML : analysisRiskScore;
         }
       } else {
         // search greylists
@@ -112,7 +112,7 @@ class QueryService {
             mlData = mlDataML;
             analysisMethod += ' | ' + analysisMethodML;
             // overwrite risk score only if ML indicates more than 10%
-            analysisRiskScore = analysisRiskScoreML > 10 ? analysisRiskScoreML : analysisRiskScore;
+            analysisRiskScore = analysisRiskScoreML > 30 ? analysisRiskScoreML : analysisRiskScore;
           }
         }
       }
