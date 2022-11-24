@@ -8,7 +8,7 @@
 
 ## Setup
 
-Clone the project and set up the machine (in the following instructions a Ubuntu server is assumed).
+Clone the project and set up the machine (in the following instructions a Ubuntu server is assumed). You can easily install node and npm using nvm.
 
 ```
 sudo apt-get install nodejs npm
