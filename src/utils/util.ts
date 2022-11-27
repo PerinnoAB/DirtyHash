@@ -90,6 +90,19 @@ export const getCollection = (searchString: string): [string, string] => {
             console.log('Twitter parsed handle: ', transformedString);
           }
         }
+      } else if (strDomain === 'youtube.com') {
+        collectionName = 'youtube';
+        const url = new URL(searchString);
+        // First check the Youtube Video ID
+        let ytID = url.searchParams.get('v');
+        //If video ID is not found, then check the channel ID
+        if (ytID === null) {
+          ytID = url.pathname.substring(1);
+          if (ytID.startsWith('@')) ytID = ytID.substring(1);
+        }
+
+        transformedString = ytID;
+        console.log('Youtube parsed handle: ', transformedString);
       } else {
         collectionName = 'domains';
         transformedString = strDomain;
