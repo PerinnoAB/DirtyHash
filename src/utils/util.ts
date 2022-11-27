@@ -73,7 +73,7 @@ export const getCollection = (searchString: string): [string, string] => {
   } else if (searchString.endsWith('.eth')) {
     collectionName = 'eth-domains';
     transformedString = searchString.toLowerCase();
-  } else if (searchString.startsWith('@')) {
+  } else if (searchString.startsWith('@') && searchString.length <= 16) {
     collectionName = 'twitter';
     transformedString = searchString.substring(1).toLowerCase();
   } else if (getDomain(searchString)) {
@@ -85,13 +85,10 @@ export const getCollection = (searchString: string): [string, string] => {
           searchString = searchString.slice(idex + 12);
           if (searchString.length > 0) {
             collectionName = 'twitter';
-            transformedString = '@' + searchString.split('/')[0];
+            transformedString = searchString.split('/')[0];
             transformedString = transformedString.toLowerCase();
             console.log('Twitter parsed handle: ', transformedString);
           }
-        } else {
-          collectionName = 'domains';
-          transformedString = strDomain;
         }
       } else {
         collectionName = 'domains';
