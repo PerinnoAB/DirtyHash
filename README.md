@@ -6,6 +6,8 @@
 
 [DirtyHash](https://dirtyhash.com) is a security project to defend against Web3 and Crypto frauds, phishing, ransomware, blackmailers and money laundering. With this you can analyze suspicious entities (wallet addresses, smart contracts, web3 and regular domains, NFTs, social media handles, bank accounts, etc.) to detect frauds and scams. You can report any scams and also share them with the community.
 
+Read the [launch post here](https://medium.com/@amiacs/towards-a-safer-web3-defending-against-cryptoscams-with-dirtyhash-b0d08f1039e6).
+
 ## Setup
 
 Clone the project and set up the machine (in the following instructions a Ubuntu server is assumed). You can easily install node and npm using nvm.
