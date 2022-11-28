@@ -90,7 +90,7 @@ export const getCollection = (searchString: string): [string, string] => {
             console.log('Twitter parsed handle: ', transformedString);
           }
         }
-      } else if (strDomain === 'youtube.com') {
+      } else if (strDomain === 'youtube.com' || 'youtu.be') {
         collectionName = 'youtube';
         const url = new URL(searchString);
         // First check the Youtube Video ID
