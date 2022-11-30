@@ -13,6 +13,7 @@ limitations under the License.
 import { validate } from 'multicoin-address-validator';
 import validator from 'validator';
 import { getDomain } from 'tldts';
+const parse = require('url-parse');
 
 /**
  * @method isEmpty
@@ -92,15 +93,26 @@ export const getCollection = (searchString: string): [string, string] => {
         }
       } else if (strDomain === 'youtube.com' || strDomain === 'youtu.be') {
         collectionName = 'youtube';
-        const url = new URL(searchString);
-        // First check the Youtube Video ID
-        let ytID = url.searchParams.get('v');
-        //If video ID is not found, then check the channel ID
-        if (ytID === null) {
-          ytID = url.pathname.substring(1);
-          if (ytID.startsWith('@')) ytID = ytID.substring(1);
+
+        // First check existance of @channel
+        const idex = searchString.indexOf('@');
+        if (idex > 0) {
+          transformedString = searchString.slice(idex + 1);
+        } else {
+          const parsedURL = parse(searchString, true);
+
+          // First check the Youtube Video ID
+          let ytID = 'youtube.com';
+          ytID = parsedURL.query['v'];
+          //If video ID is not found, then check the channel ID
+          if (isEmpty(ytID)) {
+            ytID = parsedURL.query['ab_channel'];
+            if (isEmpty(ytID)) {
+              ytID = 'youtube.com';
+            }
+          }
+          transformedString = ytID;
         }
-        transformedString = ytID;
         console.log('Youtube parsed handle: ', transformedString);
       } else {
         collectionName = 'domains';

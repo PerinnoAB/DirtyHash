@@ -40,6 +40,7 @@
     "routing-controllers-openapi": "^3.1.0",
     "swagger-ui-express": "^4.5.0",
     "tldts": "^5.7.90",
+    "url-parse": "^1.5.10",
     "validator": "^13.7.0",
     "winston": "^3.8.1",
     "winston-daily-rotate-file": "^4.7.1"

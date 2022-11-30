@@ -66,6 +66,7 @@ class QueryService {
     }
 
     stringQuery = decodeURIComponent(stringQuery);
+    console.log('Decoded search string: ', stringQuery);
     const [queryCollection, transformedString] = getCollection(stringQuery);
     console.log('Collection: ', queryCollection, ' Transformed-string: ', transformedString);
 
