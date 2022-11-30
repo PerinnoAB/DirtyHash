@@ -90,7 +90,7 @@ export const getCollection = (searchString: string): [string, string] => {
             console.log('Twitter parsed handle: ', transformedString);
           }
         }
-      } else if (strDomain === 'youtube.com' || 'youtu.be') {
+      } else if (strDomain === 'youtube.com' || strDomain === 'youtu.be') {
         collectionName = 'youtube';
         const url = new URL(searchString);
         // First check the Youtube Video ID
@@ -100,7 +100,6 @@ export const getCollection = (searchString: string): [string, string] => {
           ytID = url.pathname.substring(1);
           if (ytID.startsWith('@')) ytID = ytID.substring(1);
         }
-
         transformedString = ytID;
         console.log('Youtube parsed handle: ', transformedString);
       } else {
