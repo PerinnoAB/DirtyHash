@@ -121,7 +121,7 @@ export const getCollection = (searchString: string): [string, string] => {
     }
   } else if (validate(searchString, 'eos')) {
     collectionName = 'eos';
-  } else if (searchString.length <= 15) {
+  } else if (searchString.length <= 15 && searchString.length >= 3) {
     collectionName = 'twitter';
     transformedString = searchString.toLowerCase();
   }
