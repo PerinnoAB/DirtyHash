@@ -32,7 +32,7 @@
     "firebase-admin": "^11.0.1",
     "helmet": "^5.1.1",
     "hpp": "^0.2.3",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "multicoin-address-validator": "^0.5.10",
     "reflect-metadata": "^0.1.13",
