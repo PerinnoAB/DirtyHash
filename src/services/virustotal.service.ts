@@ -38,16 +38,16 @@ class VirustotalService {
         const numSuspicious = resp.data.data[0].attributes.last_analysis_stats.suspicious;
 
         if (numHarmless > 0 && numMalicious === 0 && numSuspicious === 0) {
-          return { result: 'safe', sources: 'VirusTotal Engines' };
+          return { result: 'clean', sources: ['VirusTotal Engines'] };
         } else if (numHarmless === 0 && numMalicious === 0 && numSuspicious === 0) {
-          return { result: 'caution', sources: '' };
+          return { result: 'clean', sources: [] };
         } else {
-          const tresult = 'fraud';
-          let tsources = '';
+          const tresult = 'malicious';
+          const tsources = [];
           const evals = resp.data.data[0].attributes.last_analysis_results;
           Object.entries(evals).forEach(([key, value]) => {
-            if (value['category'] === 'malicious') {
-              tsources = tsources === '' ? tsources + value['engine_name'] : tsources + ', ' + value['engine_name'];
+            if (value['category'] === 'malicious' || value['category'] === 'suspicious') {
+              tsources.push(value['engine_name']);
             }
           });
           return { result: tresult, sources: tsources };

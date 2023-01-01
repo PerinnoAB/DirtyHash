@@ -14,16 +14,14 @@ import FirestoreService from './firestore.service';
 import VirustotalService from './virustotal.service';
 import MLService from './ml.service';
 import { getCollection, isEmpty } from '../utils/util';
+import { getDomain } from 'tldts';
 
 class QueryService {
   public firestoreService = new FirestoreService();
   public virustotalService = new VirustotalService();
   public mlService = new MLService();
 
-  private async getMLPrediction(address: string, chain: string): Promise<[string, number, string, any]> {
-    let analysisResult = 'unknown';
-    let analysisRiskScore = 0;
-    let analysisMethod = '--';
+  private async getMLPrediction(address: string, chain: string): Promise<any> {
     let mlData = {};
 
     switch (chain) {
@@ -37,29 +35,23 @@ class QueryService {
         break;
     }
 
-    if (!isEmpty(mlData)) {
-      if (mlData['is_fraud'] === '-1') {
-        analysisResult = 'new';
-        analysisRiskScore = 0;
-      } else {
-        analysisResult = 'caution';
-        analysisRiskScore = mlData['risk_score'];
-        analysisMethod = 'Machine Learning';
-      }
-    }
-
-    return [analysisResult, analysisRiskScore, analysisMethod, mlData];
+    return mlData;
   }
 
   public async queryString(stringQuery: string): Promise<any> {
-    let analysisResult = 'unknown';
-    let analysisRiskScore = 0;
-    let analysisMethod = '--';
-    let analysisSource = 'DirtyHash';
-    let dhResult = {};
-    let searchStatsResult = {};
-    let mlData = {};
+    let overallAnalysisResult = 'unknown';
+    let overallAnalysisRiskScore = 0;
+    let blacklistResult = {};
+    let whitelistResult = {};
+    let txTracingResult = {};
+    let levenshteinAnalysisResult = {};
+    let mlAnalysisResult = {};
+    let phishingMalwareAnalysisResult = {};
     let userComments = [];
+    let searchStatsResult = {};
+
+    let foundInWhitelist = false;
+    let relatedURL = '';
 
     if (isEmpty(stringQuery)) {
       return null;
@@ -73,106 +65,132 @@ class QueryService {
     // Search whitelists first
     let queryValue = await this.firestoreService.getDoc('wl-' + queryCollection, transformedString);
     if (queryValue.data()) {
-      analysisResult = 'safe';
-      analysisRiskScore = 5;
-      analysisMethod = 'whitelist';
+      foundInWhitelist = true;
+      overallAnalysisResult = 'safe';
+      overallAnalysisRiskScore = 5;
+      whitelistResult = {
+        found: 'true',
+        ...queryValue.data(),
+      };
+      relatedURL = whitelistResult['url'];
       userComments = await this.firestoreService.getUserComments('wl-' + queryCollection, transformedString);
-      this.firestoreService.updateDocStats('wl-' + queryCollection, transformedString);
     } else {
       // then search blacklists
       queryValue = await this.firestoreService.getDoc(queryCollection, transformedString);
       if (queryValue.data()) {
-        analysisResult = 'fraud';
-        analysisRiskScore = 95;
-        analysisMethod = 'blacklist';
+        overallAnalysisResult = 'fraud';
+        overallAnalysisRiskScore = 95;
+        blacklistResult = {
+          found: 'true',
+          ...queryValue.data(),
+        };
+        relatedURL = blacklistResult['url'];
         userComments = await this.firestoreService.getUserComments(queryCollection, transformedString);
-        this.firestoreService.updateDocStats(queryCollection, transformedString);
-
-        // for blacklisted eth and btc, additionally call ML service
-        if (queryCollection === 'btc' || queryCollection === 'eth') {
-          // also call ML service
-          const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
-          mlData = mlDataML;
-          analysisMethod += ' | ' + analysisMethodML;
-          // overwrite risk score only if ML indicates more than 10%
-          analysisRiskScore = analysisRiskScoreML > 30 ? analysisRiskScoreML : analysisRiskScore;
-        }
       } else {
         // search greylists
         queryValue = await this.firestoreService.getDoc('gl-' + queryCollection, transformedString);
         if (queryValue.data()) {
-          analysisResult = 'fraud';
-          analysisRiskScore = 80;
-          analysisMethod = 'Transaction tracing';
-          this.firestoreService.updateDocStats(queryCollection, transformedString);
+          overallAnalysisResult = 'caution';
+          overallAnalysisRiskScore = 70;
+          txTracingResult = {
+            found: 'true',
+            ...queryValue.data(),
+          };
+        }
+      }
+    }
 
-          // for greylisted eth and btc, additionally call ML service
-          if (queryCollection === 'btc' || queryCollection === 'eth') {
-            // also call ML service
-            const [, analysisRiskScoreML, analysisMethodML, mlDataML] = await this.getMLPrediction(transformedString, queryCollection);
-            mlData = mlDataML;
-            analysisMethod += ' | ' + analysisMethodML;
-            // overwrite risk score only if ML indicates more than 10%
-            analysisRiskScore = analysisRiskScoreML > 30 ? analysisRiskScoreML : analysisRiskScore;
+    // In case of domain OR is a related URL is found, query the Virustotal service
+    if (queryCollection === 'domains') {
+      console.log('Calling Virustotal for domain: ', transformedString);
+      const vtResult = await this.virustotalService.getVirustotalVerdict(transformedString);
+
+      if (vtResult !== null) {
+        phishingMalwareAnalysisResult = {
+          AnalyzedBy: 'VirusTotal',
+          URL: transformedString,
+          ...vtResult,
+        };
+        overallAnalysisResult = overallAnalysisResult === 'unknown' ? vtResult['result'] : overallAnalysisResult;
+        if (vtResult['result'] === 'malicious') {
+          overallAnalysisRiskScore = 95;
+        }
+      }
+    } else if (!isEmpty(relatedURL)) {
+      const relatedDomain = getDomain(relatedURL);
+      console.log('Calling Virustotal for domain: ', relatedDomain);
+      const vtResult = await this.virustotalService.getVirustotalVerdict(relatedDomain);
+
+      if (vtResult !== null) {
+        phishingMalwareAnalysisResult = {
+          AnalyzedBy: 'VirusTotal',
+          Domain: relatedDomain,
+          ...vtResult,
+        };
+        overallAnalysisResult = overallAnalysisResult === 'unknown' ? vtResult['result'] : overallAnalysisResult;
+        if (vtResult['result'] === 'malicious') {
+          overallAnalysisRiskScore = 95;
+        }
+      }
+    }
+
+    // In case of twitter handle, query the twitter ML service
+    if (queryCollection === 'twitter' && !foundInWhitelist) {
+      const twitter_analysis = await this.mlService.getAnalysisTwitter(transformedString);
+      if (!isEmpty(twitter_analysis)) {
+        levenshteinAnalysisResult = {
+          ...twitter_analysis,
+        };
+
+        const riskScore: number = +twitter_analysis['risk_score'];
+        if (overallAnalysisResult === 'unknown' && riskScore > 30) {
+          overallAnalysisResult = 'caution';
+          // overwrite risk score only if ML indicates more than 30%
+          overallAnalysisRiskScore = riskScore;
+        }
+      }
+    }
+
+    // for eth and btc, not in whitelist, call the ML service
+    if (!foundInWhitelist) {
+      if (queryCollection === 'btc' || queryCollection === 'eth') {
+        const mlResult = await this.getMLPrediction(transformedString, queryCollection);
+        if (!isEmpty(mlResult)) {
+          mlAnalysisResult = mlResult;
+          const riskScore: number = +mlResult['risk_score'];
+          if (overallAnalysisResult === 'unknown' && riskScore > 30) {
+            overallAnalysisResult = 'caution';
+            // overwrite risk score only if ML indicates more than 30%
+            overallAnalysisRiskScore = riskScore;
           }
         }
       }
     }
 
-    dhResult = queryValue.data();
+    // See if we have stats in 'searches' collection
+    queryValue = await this.firestoreService.getDoc('searches', transformedString);
+    searchStatsResult = queryValue.data();
+    this.firestoreService.updateDocStats('searches', transformedString);
 
-    // if no blacklist or whitelist was hit, then try Virustotal on domain and ML on btc
-    if (!dhResult) {
-      dhResult = {};
-      // In case of domain that is not in our DB, query the Virustotal service
-      if (queryCollection === 'domains') {
-        console.log('Calling Virustotal for domain: ', transformedString);
-        const vtResult = await this.virustotalService.getVirustotalVerdict(transformedString);
-
-        if (vtResult !== null) {
-          analysisMethod = 'VirusTotal';
-          analysisResult = vtResult['result'];
-          analysisRiskScore = analysisResult == 'safe' ? 5 : 95;
-          analysisSource = vtResult['sources'];
-        }
-      } else if (queryCollection === 'twitter') {
-        const twitter_analysis = await this.mlService.getAnalysisTwitter(transformedString);
-        if (!isEmpty(twitter_analysis)) {
-          analysisMethod = twitter_analysis['method'];
-          analysisResult = 'caution';
-          analysisRiskScore = twitter_analysis['risk_score'];
-          dhResult['category'] = twitter_analysis['category'];
-          dhResult['genuine_handle'] = twitter_analysis['genuine_handle'];
-        }
-      }
-      // else analyze with ML service
-      else {
-        [analysisResult, analysisRiskScore, analysisMethod, mlData] = await this.getMLPrediction(transformedString, queryCollection);
-      }
-
-      // See if we have stats in 'searches' collection
-      queryValue = await this.firestoreService.getDoc('searches', transformedString);
-      searchStatsResult = queryValue.data();
-
-      this.firestoreService.updateDocStats('searches', transformedString);
-    }
-
-    // if source is empty, return D# as the source
-    if (dhResult && !dhResult['source']) {
-      dhResult['source'] = analysisSource;
+    if (isEmpty(blacklistResult['source'])) {
+      blacklistResult['source'] = 'DirtyHash';
     }
 
     // Return response
     const response = {
-      id: queryValue.id,
-      result: analysisResult,
-      collection: queryCollection,
-      riskScore: analysisRiskScore,
-      method: analysisMethod,
-      ...dhResult,
-      ...searchStatsResult,
-      mlResult: mlData,
-      comments: userComments,
+      SearchTerm: queryValue.id,
+      Collection: queryCollection,
+      OverallAssessmentResult: overallAnalysisResult,
+      OverallAssessmentRiskScore: overallAnalysisRiskScore,
+      RelatedURL: relatedURL,
+      BlacklistSearchResult: blacklistResult,
+      TransactionTracingResult: txTracingResult,
+      WhitelistSearchResult: whitelistResult,
+      LevenshteinAnalysisResult: levenshteinAnalysisResult,
+      MachineLearningAnalysisResult: mlAnalysisResult,
+      PhishingMalwareAnalysisResult: phishingMalwareAnalysisResult,
+      UserReports: userComments,
+      SearchStats: searchStatsResult ? searchStatsResult : {},
     };
     console.log('Response: ', response);
 
