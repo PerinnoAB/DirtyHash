@@ -42,7 +42,7 @@ class QueryService {
     let overallAnalysisResult = 'unknown';
     let overallAnalysisRiskScore = 0;
     let blacklistResult = {};
-    let relatedURLBlacklistResult = {};
+    // let relatedURLBlacklistResult = {};
     let whitelistResult = {};
     let txTracingResult = {};
     let levenshteinAnalysisResult = {};
@@ -87,19 +87,19 @@ class QueryService {
         };
         relatedURL = blacklistResult['url'];
 
-        // check if related URL is in blacklist
-        if (!isEmpty(relatedURL)) {
-          const [, tURL] = getCollection(relatedURL);
-          queryValue = await this.firestoreService.getDoc('domains', tURL);
-          if (queryValue.data()) {
-            overallAnalysisResult = 'fraud';
-            overallAnalysisRiskScore = 95;
-            relatedURLBlacklistResult = {
-              found: 'true',
-              ...queryValue.data(),
-            };
-          }
-        }
+        // // check if related URL is in blacklist
+        // if (!isEmpty(relatedURL)) {
+        //   const [, tURL] = getCollection(relatedURL);
+        //   queryValue = await this.firestoreService.getDoc('domains', tURL);
+        //   if (queryValue.data()) {
+        //     overallAnalysisResult = 'fraud';
+        //     overallAnalysisRiskScore = 95;
+        //     relatedURLBlacklistResult = {
+        //       found: 'true',
+        //       ...queryValue.data(),
+        //     };
+        //   }
+        // }
         userComments = await this.firestoreService.getUserComments(queryCollection, transformedString);
       } else {
         // search greylists
@@ -199,7 +199,7 @@ class QueryService {
       OverallAssessmentRiskScore: overallAnalysisRiskScore,
       RelatedURL: relatedURL,
       BlacklistSearchResult: blacklistResult,
-      RelatedURLBlacklistResult: relatedURLBlacklistResult,
+      // RelatedURLBlacklistResult: relatedURLBlacklistResult,
       TransactionTracingResult: txTracingResult,
       WhitelistSearchResult: whitelistResult,
       LevenshteinAnalysisResult: levenshteinAnalysisResult,
