@@ -126,9 +126,10 @@ class QueryService {
           URL: transformedString,
           ...vtResult,
         };
-        overallAnalysisResult = overallAnalysisResult === 'unknown' ? vtResult['result'] : overallAnalysisResult;
-        if (vtResult['result'] === 'malicious') {
-          overallAnalysisRiskScore = 95;
+
+        if (overallAnalysisResult === 'unknown') {
+          overallAnalysisResult = vtResult['result'];
+          overallAnalysisRiskScore = overallAnalysisResult === 'clean' ? 5 : 95;
         }
       }
     } else if (!isEmpty(relatedURL)) {
