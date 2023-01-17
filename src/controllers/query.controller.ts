@@ -11,7 +11,7 @@ limitations under the License.
 ==============================================================================*/
 
 import QueryService from '@/services/query.service';
-import { Controller, Get, OnNull, OnUndefined, Param } from 'routing-controllers';
+import { Controller, Get, OnNull, Param, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
@@ -21,7 +21,8 @@ export class QueryController {
   @Get('/query/:query')
   @OpenAPI({ summary: 'Return the result of fraud detection analysis' })
   @OnNull(204)
-  async queryString(@Param('query') query: string) {
+  async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string) {
+    console.log('API Key: ', apiKey);
     const queryResult = await this.queryService.queryString(query);
     if (queryResult) {
       return queryResult;
