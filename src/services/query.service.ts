@@ -174,7 +174,7 @@ class QueryService {
         if (!isEmpty(mlResult)) {
           mlAnalysisResult = mlResult;
           const riskScore: number = +mlResult['risk_score'];
-          if (overallAnalysisResult === 'unknown' && riskScore > 30) {
+          if (overallAnalysisResult === 'unknown') {
             overallAnalysisResult = 'caution';
             // overwrite risk score only if ML indicates more than 30%
             overallAnalysisRiskScore = riskScore;
