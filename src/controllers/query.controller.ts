@@ -21,7 +21,7 @@ export class QueryController {
   public authService = new AuthService();
 
   @Get('/query/:query')
-  @OpenAPI({ summary: 'Return the result of fraud detection analysis' })
+  @OpenAPI({ summary: 'Returns the result of fraud detection analysis. Please email contact@dirtyhash.com to get the API key.' })
   @OnNull(204)
   @OnUndefined(403)
   async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string) {
