@@ -10,66 +10,78 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-import { compare, hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
-import { SECRET_KEY } from '@config';
-import { CreateUserDto } from '@dtos/users.dto';
-import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
-import { User } from '@interfaces/users.interface';
-import userModel from '@models/users.model';
+// import { compare, hash } from 'bcrypt';
+// import { sign } from 'jsonwebtoken';
+// import { SECRET_KEY } from '@config';
+// import { CreateUserDto } from '@dtos/users.dto';
+// import { HttpException } from '@exceptions/HttpException';
+// import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
+// import { User } from '@interfaces/users.interface';
+// import userModel from '@models/users.model';
 import { isEmpty } from '@utils/util';
+import FirestoreService from './firestore.service';
 
 class AuthService {
-  public users = userModel;
+  // public users = userModel;
+  public firestoreService = new FirestoreService();
 
-  public async signup(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
-
-    const findUser: User = this.users.find(user => user.email === userData.email);
-    if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
-
-    const hashedPassword = await hash(userData.password, 10);
-    const createUserData: User = { id: this.users.length + 1, ...userData, password: hashedPassword };
-
-    return createUserData;
+  public async isAPIKeyValid(apiKey: string): Promise<Boolean> {
+    if (!isEmpty(apiKey)) {
+      const remaingQuota = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
+      console.log('API Key: ', apiKey, 'Remaining Quota: ', remaingQuota);
+      return remaingQuota > 0 ? true : false;
+    }
+    // If api key is not present, then the request will already be throttled at the load balancer, so let the request through
+    return true;
   }
 
-  public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
-    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
+  // public async signup(userData: CreateUserDto): Promise<User> {
+  //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-    const findUser: User = this.users.find(user => user.email === userData.email);
-    if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
+  //   const findUser: User = this.users.find(user => user.email === userData.email);
+  //   if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
 
-    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
-    if (!isPasswordMatching) throw new HttpException(409, 'Password is not matching');
+  //   const hashedPassword = await hash(userData.password, 10);
+  //   const createUserData: User = { id: this.users.length + 1, ...userData, password: hashedPassword };
 
-    const tokenData = this.createToken(findUser);
-    const cookie = this.createCookie(tokenData);
+  //   return createUserData;
+  // }
 
-    return { cookie, findUser };
-  }
+  // public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
+  //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-  public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
+  //   const findUser: User = this.users.find(user => user.email === userData.email);
+  //   if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
 
-    const findUser: User = this.users.find(user => user.email === userData.email && user.password === userData.password);
-    if (!findUser) throw new HttpException(409, "User doesn't exist");
+  //   const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
+  //   if (!isPasswordMatching) throw new HttpException(409, 'Password is not matching');
 
-    return findUser;
-  }
+  //   const tokenData = this.createToken(findUser);
+  //   const cookie = this.createCookie(tokenData);
 
-  public createToken(user: User): TokenData {
-    const dataStoredInToken: DataStoredInToken = { id: user.id };
-    const secretKey: string = SECRET_KEY;
-    const expiresIn: number = 60 * 60;
+  //   return { cookie, findUser };
+  // }
 
-    return { expiresIn, token: sign(dataStoredInToken, secretKey, { expiresIn }) };
-  }
+  // public async logout(userData: User): Promise<User> {
+  //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-  public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
-  }
+  //   const findUser: User = this.users.find(user => user.email === userData.email && user.password === userData.password);
+  //   if (!findUser) throw new HttpException(409, "User doesn't exist");
+
+  //   return findUser;
+  // }
+
+  // public createToken(user: User): TokenData {
+  //   const dataStoredInToken: DataStoredInToken = { id: user.id };
+  //   const secretKey: string = SECRET_KEY;
+  //   const expiresIn: number = 60 * 60;
+
+  //   return { expiresIn, token: sign(dataStoredInToken, secretKey, { expiresIn }) };
+  // }
+
+  // public createCookie(tokenData: TokenData): string {
+  //   return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+  // }
 }
 
 export default AuthService;

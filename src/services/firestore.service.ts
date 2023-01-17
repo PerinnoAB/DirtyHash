@@ -69,6 +69,22 @@ class FirestoreService {
     payload['timestamp'] = new Date().getTime();
     await this.db.collection(collectionName).add(JSON.parse(JSON.stringify(payload)));
   }
+
+  public async getAPIKeyRemainingQuota(apiKey: string): Promise<number> {
+    let remainingQuota = 0;
+    const docRef = this.db.collection('api-keys').doc(apiKey);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      remainingQuota = doc.data().RemainingQuota;
+
+      if (remainingQuota > 0) {
+        const res = await docRef.update({
+          RemainingQuota: FieldValue.increment(-1),
+        });
+      }
+    }
+    return remainingQuota;
+  }
 }
 
 export default FirestoreService;

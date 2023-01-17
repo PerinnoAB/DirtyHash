@@ -11,22 +11,30 @@ limitations under the License.
 ==============================================================================*/
 
 import QueryService from '@/services/query.service';
-import { Controller, Get, OnNull, Param, HeaderParam } from 'routing-controllers';
+import AuthService from '@/services/auth.service';
+import { Controller, Get, OnNull, OnUndefined, Param, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
 export class QueryController {
   public queryService = new QueryService();
+  public authService = new AuthService();
 
   @Get('/query/:query')
   @OpenAPI({ summary: 'Return the result of fraud detection analysis' })
   @OnNull(204)
+  @OnUndefined(403)
   async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string) {
-    console.log('API Key: ', apiKey);
-    const queryResult = await this.queryService.queryString(query);
-    if (queryResult) {
-      return queryResult;
+    const apiKeyIsValid = await this.authService.isAPIKeyValid(apiKey);
+    if (apiKeyIsValid) {
+      const queryResult = await this.queryService.queryString(query);
+      if (queryResult) {
+        return queryResult;
+      }
+      return null;
+    } else {
+      // if api key is invalid, return undefined which will translate to unauthenticated status code
+      return undefined;
     }
-    return null;
   }
 }
