@@ -108,7 +108,7 @@ class App {
       },
       info: {
         description:
-          'Analyze suspicious wallet addresses, domains, NFTs with machine learning to detect frauds and scams, share them with the community.',
+          '### Analyze suspicious wallet addresses, domains, NFTs with machine learning to detect frauds and scams, share them with the community.\n##### *For full access, please email contact@dirtyhash.com to get your API key.*',
         title: 'DirtyHash™ REST API Documentation',
         version: '1.0.0',
       },

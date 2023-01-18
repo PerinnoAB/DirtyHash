@@ -21,7 +21,11 @@ export class QueryController {
   public authService = new AuthService();
 
   @Get('/query/:query')
-  @OpenAPI({ summary: 'Returns the result of fraud detection analysis. Please email contact@dirtyhash.com to get the API key.' })
+  @OpenAPI({
+    summary: 'Returns the result of fraud detection analysis',
+    description:
+      '### Note: You can call this API without the x-apikey header, but in that case your requests will be throttled.\nStatus codes: \n* 200 OK Success \n* 204 Internal server error \n* 409 Too many requests without x-apikey header \n* 403 API key is invalid or your request quota has been exhausted',
+  })
   @OnNull(204)
   @OnUndefined(403)
   async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string) {
