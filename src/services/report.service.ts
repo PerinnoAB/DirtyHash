@@ -53,8 +53,8 @@ class ReportService {
   private sendOpsEmail(payload: Report) {
     // send email to DH Ops team
     const msg = {
-      to: 'contact@perinno.com', // Change to your recipient
-      from: 'contact@perinno.com', // Change to your verified sender
+      to: 'contact@dirtyhash.com', // Change to your recipient
+      from: 'contact@dirtyhash.com', // Change to your verified sender
       subject: 'New user report: ' + payload.reportString,
       text: 'report',
       html:
