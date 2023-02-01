@@ -48,6 +48,7 @@ export const getCollection = (searchString: string): [string, string] => {
   if (validate(searchString, 'btc')) {
     collectionName = 'btc';
   } else if (validate(searchString, 'eth')) {
+    // eth is case insensitive
     collectionName = 'eth';
     transformedString = searchString.toLowerCase();
   } else if (validate(searchString, 'sol')) {
@@ -56,6 +57,12 @@ export const getCollection = (searchString: string): [string, string] => {
     collectionName = 'trx';
   } else if (validate(searchString, 'bnb')) {
     collectionName = 'bnb';
+  } else if (validate(searchString, 'dot')) {
+    // dot is case sensitive
+    collectionName = 'dot';
+  } else if (validate(searchString, 'ada')) {
+    // ada is case sensitive
+    collectionName = 'ada';
   } else if (validator.isEmail(searchString)) {
     collectionName = 'email';
     transformedString = validator.normalizeEmail(searchString, {
