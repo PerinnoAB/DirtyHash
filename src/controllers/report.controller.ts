@@ -13,7 +13,7 @@ limitations under the License.
 import { CreateReportDto } from '@/dtos/reports.dto';
 import { ReportCategory } from '@/interfaces/report.interface';
 import ReportService from '@/services/report.service';
-import { BodyParam, Controller, HttpCode, OnNull, Post } from 'routing-controllers';
+import { BodyParam, Controller, HttpCode, OnNull, Post, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
@@ -35,6 +35,7 @@ export class ReportController {
   @HttpCode(201)
   @OnNull(400)
   async createReport(
+    @HeaderParam('Authorization') authToken: string,
     @BodyParam('reportString', { required: true }) reportString: string,
     @BodyParam('category', { required: true }) categoryAsString: string,
     @BodyParam('otherCategory') otherCategory?: string,

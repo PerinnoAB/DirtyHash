@@ -25,16 +25,27 @@ class AuthService {
   // public users = userModel;
   public firestoreService = new FirestoreService();
 
-  public async isAPIKeyValid(apiKey: string): Promise<Boolean> {
-    if (!isEmpty(apiKey)) {
+  public async shouldServeRequest(apiKey: string, authToken: string): Promise<Boolean> {
+    // if credentials are not provided, return true, as these requests will be throttled at the load balancer
+    if (isEmpty(apiKey) && isEmpty(authToken)) {
+      return true;
+    }
+
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        console.log('Valid token found', decodedToken.email);
+        const remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
+        console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+        return remaingQuota > 0 ? true : false;
+      }
+    } else if (!isEmpty(apiKey)) {
       const remaingQuota = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
       console.log('API Key: ', apiKey, 'Remaining Quota: ', remaingQuota);
       return remaingQuota > 0 ? true : false;
     }
-    // If api key is not present, then the request will already be throttled at the load balancer, so let the request through
-    return true;
+    return false;
   }
-
   // public async signup(userData: CreateUserDto): Promise<User> {
   //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 

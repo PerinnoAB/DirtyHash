@@ -12,6 +12,7 @@ limitations under the License.
 
 import { applicationDefault, initializeApp, getApps, getApp } from 'firebase-admin/app';
 import { DocumentSnapshot, FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 
 class FirestoreService {
   // Initialize Firebase
@@ -25,6 +26,11 @@ class FirestoreService {
 
   public async getDoc(collectionName: string, docName: string): Promise<DocumentSnapshot> {
     return await this.db.collection(collectionName).doc(docName).get();
+  }
+
+  public async decodeAuthToken(authToken: string): Promise<any> {
+    const decodedToken = await getAuth(this.app).verifyIdToken(authToken);
+    return decodedToken;
   }
 
   public async getUserComments(collectionName: string, docName: string): Promise<any[]> {
@@ -75,8 +81,18 @@ class FirestoreService {
     const docRef = this.db.collection('api-keys').doc(apiKey);
     const doc = await docRef.get();
     if (doc.exists) {
-      remainingQuota = doc.data().RemainingQuota;
+      const email = doc.data().email;
+      remainingQuota = await this.getUserRemainingQuota(email);
+    }
+    return remainingQuota;
+  }
 
+  public async getUserRemainingQuota(email: string): Promise<number> {
+    let remainingQuota = 0;
+    const docRef = this.db.collection('users').doc(email);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      remainingQuota = doc.data().RemainingQuota;
       if (remainingQuota > 0) {
         const res = await docRef.update({
           RemainingQuota: FieldValue.increment(-1),

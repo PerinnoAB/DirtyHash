@@ -28,9 +28,9 @@ export class QueryController {
   })
   @OnNull(204)
   @OnUndefined(403)
-  async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string) {
-    const apiKeyIsValid = await this.authService.isAPIKeyValid(apiKey);
-    if (apiKeyIsValid) {
+  async queryString(@Param('query') query: string, @HeaderParam('x-apikey') apiKey: string, @HeaderParam('Authorization') authToken: string) {
+    const shouldServe = await this.authService.shouldServeRequest(apiKey, authToken);
+    if (shouldServe) {
       const queryResult = await this.queryService.queryString(query);
       if (queryResult) {
         return queryResult;
