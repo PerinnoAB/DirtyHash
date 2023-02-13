@@ -98,6 +98,12 @@ class FirestoreService {
           RemainingQuota: FieldValue.increment(-1),
         });
       }
+    } else {
+      console.log('Email not found, setting default quota for: ', email);
+      remainingQuota = 5;
+      await docRef.set({
+        RemainingQuota: remainingQuota,
+      });
     }
     return remainingQuota;
   }
