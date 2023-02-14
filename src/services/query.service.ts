@@ -140,7 +140,7 @@ class QueryService {
       if (vtResult !== null) {
         phishingMalwareAnalysisResult = {
           AnalyzedBy: 'VirusTotal',
-          Domain: relatedDomain,
+          URL: relatedDomain,
           ...vtResult,
         };
         overallAnalysisResult = overallAnalysisResult === 'unknown' ? vtResult['result'] : overallAnalysisResult;
