@@ -34,7 +34,7 @@ class AuthService {
     if (!isEmpty(authToken)) {
       const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
       if (decodedToken) {
-        console.log('Valid token found', decodedToken.email);
+        console.log('Valid token found: ', decodedToken.email);
         const remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
         console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
         return remaingQuota > 0 ? true : false;
@@ -45,6 +45,20 @@ class AuthService {
       return remaingQuota > 0 ? true : false;
     }
     return false;
+  }
+
+  public async getSearchCredits(authToken: string): Promise<number> {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        const remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email, 0);
+        console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+        return remaingQuota;
+      } else {
+        console.log('No valid token');
+      }
+    }
+    return 0;
   }
   // public async signup(userData: CreateUserDto): Promise<User> {
   //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');

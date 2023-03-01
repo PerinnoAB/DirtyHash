@@ -87,7 +87,7 @@ class FirestoreService {
     return remainingQuota;
   }
 
-  public async getUserRemainingQuota(email: string): Promise<number> {
+  public async getUserRemainingQuota(email: string, decrement = -1): Promise<number> {
     let remainingQuota = 0;
     const docRef = this.db.collection('users').doc(email);
     const doc = await docRef.get();
@@ -95,7 +95,7 @@ class FirestoreService {
       remainingQuota = doc.data().RemainingQuota;
       if (remainingQuota > 0) {
         const res = await docRef.update({
-          RemainingQuota: FieldValue.increment(-1),
+          RemainingQuota: FieldValue.increment(decrement),
         });
       }
     } else {

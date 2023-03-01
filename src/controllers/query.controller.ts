@@ -41,4 +41,14 @@ export class QueryController {
       return undefined;
     }
   }
+
+  @Get('/search-credits')
+  @OpenAPI({
+    summary: 'Returns the number of remaining search credits for a particular user',
+  })
+  async getSearchCredits(@HeaderParam('Authorization') authToken: string) {
+    const searchCredits = await this.authService.getSearchCredits(authToken);
+    const response = { SearchCredits: searchCredits };
+    return response;
+  }
 }
