@@ -14,6 +14,7 @@ import QueryService from '@/services/query.service';
 import AuthService from '@/services/auth.service';
 import { Controller, Get, OnNull, OnUndefined, Param, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
+import { getAllChainsForAddress, isEmpty } from '../utils/util';
 
 @Controller()
 export class QueryController {
@@ -50,5 +51,17 @@ export class QueryController {
     const searchCredits = await this.authService.getSearchCredits(authToken);
     const response = { SearchCredits: searchCredits };
     return response;
+  }
+
+  @Get('/chains/:address')
+  @OpenAPI({
+    summary: 'Returns all crypto chains to which this address belongs',
+  })
+  @OnNull(204)
+  async getChainsForAddress(@Param('address') address: string) {
+    if (!isEmpty(address)) {
+      return JSON.stringify(getAllChainsForAddress(address));
+    }
+    return null;
   }
 }
