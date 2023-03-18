@@ -178,6 +178,8 @@ class QueryService {
             overallAnalysisResult = 'caution';
             // overwrite risk score only if ML indicates more than 30%
             overallAnalysisRiskScore = riskScore;
+
+            this.reportDirtyMLCandidate(transformedString, queryCollection, riskScore);
           }
         }
       }
@@ -212,6 +214,17 @@ class QueryService {
     console.log('Response: ', response);
 
     return response;
+  }
+
+  private async reportDirtyMLCandidate(transformedString: string, queryCollection: string, riskScore: number) {
+    if (riskScore >= 70) {
+      console.log('Adding %s to Blacklist: %s with ML score: %d', queryCollection, transformedString, riskScore);
+      const reportData = {};
+      reportData['first-reported'] = new Date().getTime();
+      reportData['category'] = 'SCAM';
+      reportData['source'] = 'DirtyHash ML';
+      this.firestoreService.setDoc(queryCollection, transformedString, reportData);
+    }
   }
 }
 
