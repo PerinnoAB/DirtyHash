@@ -144,9 +144,9 @@ class FirestoreService {
     if (doc.exists) {
       const data = doc.data();
       if (chain === 'eth') {
-        if (data['TrackETH'].includes(address.toLowerCase())) return true;
+        if ('TrackETH' in data && data['TrackETH'].includes(address.toLowerCase())) return true;
       } else if (chain === 'btc') {
-        if (data['TrackBTC'].includes(address)) return true;
+        if ('TrackBTC' in data && data['TrackBTC'].includes(address)) return true;
       }
     }
     return false;
