@@ -107,6 +107,50 @@ class FirestoreService {
     }
     return remainingQuota;
   }
+
+  public async trackWallet(email: string, address: string, chain: string): Promise<boolean> {
+    const docRef = this.db.collection('users').doc(email);
+
+    if (chain === 'eth') {
+      const res = await docRef.update({
+        TrackETH: FieldValue.arrayUnion(address.toLowerCase()),
+      });
+    } else if (chain === 'btc') {
+      const res = await docRef.update({
+        TrackBTC: FieldValue.arrayUnion(address),
+      });
+    }
+    return true;
+  }
+
+  public async stopTrackWallet(email: string, address: string, chain: string): Promise<boolean> {
+    const docRef = this.db.collection('users').doc(email);
+
+    if (chain === 'eth') {
+      const res = await docRef.update({
+        TrackETH: FieldValue.arrayRemove(address.toLowerCase()),
+      });
+    } else if (chain === 'btc') {
+      const res = await docRef.update({
+        TrackBTC: FieldValue.arrayRemove(address),
+      });
+    }
+    return true;
+  }
+
+  public async statusTrackWallet(email: string, address: string, chain: string): Promise<boolean> {
+    const docRef = this.db.collection('users').doc(email);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (chain === 'eth') {
+        if (data['TrackETH'].includes(address.toLowerCase())) return true;
+      } else if (chain === 'btc') {
+        if (data['TrackBTC'].includes(address)) return true;
+      }
+    }
+    return false;
+  }
 }
 
 export default FirestoreService;

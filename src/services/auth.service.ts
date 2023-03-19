@@ -60,6 +60,42 @@ class AuthService {
     }
     return 0;
   }
+
+  public async trackWallet(authToken: string, address: string, chain: string) {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        const res = await this.firestoreService.trackWallet(decodedToken.email, address, chain);
+        console.log('User: %s Tracking Wallet: %s Chain: %s', decodedToken.email, address, chain);
+        return res;
+      }
+    }
+    return false;
+  }
+
+  public async stopTrackWallet(authToken: string, address: string, chain: string) {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        const res = await this.firestoreService.stopTrackWallet(decodedToken.email, address, chain);
+        console.log('User: %s Stop Tracking Wallet: %s Chain: %s', decodedToken.email, address, chain);
+        return res;
+      }
+    }
+    return false;
+  }
+
+  public async statusTrackWallet(authToken: string, address: string, chain: string) {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        const res = await this.firestoreService.statusTrackWallet(decodedToken.email, address, chain);
+        console.log('User: %s Status Tracking Wallet: %s Chain: %s Result: %s', decodedToken.email, address, chain, res);
+        return res;
+      }
+    }
+    return false;
+  }
   // public async signup(userData: CreateUserDto): Promise<User> {
   //   if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 

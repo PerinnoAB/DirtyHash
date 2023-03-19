@@ -12,7 +12,7 @@ limitations under the License.
 
 import QueryService from '@/services/query.service';
 import AuthService from '@/services/auth.service';
-import { Controller, Get, OnNull, OnUndefined, Param, HeaderParam } from 'routing-controllers';
+import { Controller, Get, OnNull, OnUndefined, Param, HeaderParam, Post, HttpCode, BodyParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { getAllChainsForAddress, isEmpty } from '../utils/util';
 
@@ -63,5 +63,91 @@ export class QueryController {
       return JSON.stringify(getAllChainsForAddress(address));
     }
     return null;
+  }
+
+  @Post('/track-wallet')
+  @OpenAPI({
+    summary: 'Track a Wallet Address and receive email notifications',
+    responses: {
+      201: {
+        description: 'Successfully subscribed to track wallet address',
+      },
+      400: {
+        description: 'Auth header is missing in the request',
+      },
+    },
+  })
+  @HttpCode(201)
+  @OnNull(400)
+  @OnUndefined(403)
+  async trackWallet(
+    @HeaderParam('Authorization') authToken: string,
+    @BodyParam('address', { required: true }) address: string,
+    @BodyParam('chain', { required: true }) chain: string,
+  ) {
+    let result = undefined;
+    // Return bad request if any auth is empty
+    if (isEmpty(authToken)) return null;
+
+    if (chain === 'btc' || chain === 'eth') result = await this.authService.trackWallet(authToken, address, chain);
+
+    return result;
+  }
+
+  @Post('/stop-track-wallet')
+  @OpenAPI({
+    summary: 'Stop tracking a Wallet Address',
+    responses: {
+      201: {
+        description: 'Successfully stopped tracking wallet address',
+      },
+      400: {
+        description: 'Auth header is missing in the request',
+      },
+    },
+  })
+  @HttpCode(201)
+  @OnNull(400)
+  @OnUndefined(403)
+  async stopTrackWallet(
+    @HeaderParam('Authorization') authToken: string,
+    @BodyParam('address', { required: true }) address: string,
+    @BodyParam('chain', { required: true }) chain: string,
+  ) {
+    let result = undefined;
+    // Return bad request if any auth is empty
+    if (isEmpty(authToken)) return null;
+
+    if (chain === 'btc' || chain === 'eth') result = await this.authService.stopTrackWallet(authToken, address, chain);
+
+    return result;
+  }
+
+  @Post('/status-track-wallet')
+  @OpenAPI({
+    summary: 'Track status of a Wallet Address for a particular user',
+    responses: {
+      201: {
+        description: 'Success',
+      },
+      400: {
+        description: 'Auth header is missing in the request',
+      },
+    },
+  })
+  @HttpCode(201)
+  @OnNull(400)
+  @OnUndefined(403)
+  async statusTrackWallet(
+    @HeaderParam('Authorization') authToken: string,
+    @BodyParam('address', { required: true }) address: string,
+    @BodyParam('chain', { required: true }) chain: string,
+  ) {
+    let result = undefined;
+    // Return bad request if any auth is empty
+    if (isEmpty(authToken)) return null;
+
+    if (chain === 'btc' || chain === 'eth') result = await this.authService.statusTrackWallet(authToken, address, chain);
+    return result;
   }
 }
