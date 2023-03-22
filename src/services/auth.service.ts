@@ -20,6 +20,10 @@ limitations under the License.
 // import userModel from '@models/users.model';
 import { isEmpty } from '@utils/util';
 import FirestoreService from './firestore.service';
+import { SENDGRID_API_KEY, SENDGRID_TEMPLATE_ID_TRACK_WALLET, SENDGRID_TEMPLATE_ID_STOP_TRACK_WALLET, REPORT_EMAIL } from '@config';
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(SENDGRID_API_KEY);
 
 class AuthService {
   // public users = userModel;
@@ -47,6 +51,30 @@ class AuthService {
     return false;
   }
 
+  private sendUserEmail(userEmail: string, addr: string, chain: string, templateID: string) {
+    if (isEmpty(userEmail)) return;
+
+    const msg = {
+      to: userEmail,
+      from: REPORT_EMAIL,
+      bcc: REPORT_EMAIL,
+      templateId: templateID,
+      dynamicTemplateData: {
+        walletAddress: addr,
+        chainName: chain,
+      },
+    };
+
+    sgMail
+      .send(msg)
+      .then(() => {
+        // console.log('Email sent');
+      })
+      .catch(error => {
+        console.error('Error sending track/untrack email', error);
+      });
+  }
+
   public async getSearchCredits(authToken: string): Promise<number> {
     if (!isEmpty(authToken)) {
       const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
@@ -67,6 +95,7 @@ class AuthService {
       if (decodedToken) {
         const res = await this.firestoreService.trackWallet(decodedToken.email, address, chain);
         console.log('User: %s Tracking Wallet: %s Chain: %s', decodedToken.email, address, chain);
+        this.sendUserEmail(decodedToken.email, address, chain.toUpperCase(), SENDGRID_TEMPLATE_ID_TRACK_WALLET);
         return res;
       }
     }
@@ -79,6 +108,7 @@ class AuthService {
       if (decodedToken) {
         const res = await this.firestoreService.stopTrackWallet(decodedToken.email, address, chain);
         console.log('User: %s Stop Tracking Wallet: %s Chain: %s', decodedToken.email, address, chain);
+        this.sendUserEmail(decodedToken.email, address, chain.toUpperCase(), SENDGRID_TEMPLATE_ID_STOP_TRACK_WALLET);
         return res;
       }
     }
