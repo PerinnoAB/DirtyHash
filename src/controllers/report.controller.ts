@@ -12,6 +12,7 @@ limitations under the License.
 
 import { CreateReportDto } from '@/dtos/reports.dto';
 import { ReportCategory } from '@/interfaces/report.interface';
+import AuthService from '@/services/auth.service';
 import ReportService from '@/services/report.service';
 import { BodyParam, Controller, HttpCode, OnNull, Post, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
@@ -19,6 +20,7 @@ import { OpenAPI } from 'routing-controllers-openapi';
 @Controller()
 export class ReportController {
   public reportService = new ReportService();
+  public authService = new AuthService();
 
   @Post('/report')
   @OpenAPI({
@@ -53,6 +55,7 @@ export class ReportController {
       const reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
       // Write report to data without waiting for it to finish
       this.reportService.createReport(reportData);
+      this.authService.logUserReport(authToken, reportString);
       return true;
     } catch (error) {
       console.error('Error while creating report: ', error);

@@ -90,6 +90,20 @@ class FirestoreService {
       });
   }
 
+  public async logUserReport(userEmail: string, reportString: string) {
+    const reportEntry = {
+      timestamp: new Date().getTime(),
+      report: reportString,
+    };
+
+    await this.db
+      .collection('users')
+      .doc(userEmail)
+      .update({
+        reports: FieldValue.arrayUnion(reportEntry),
+      });
+  }
+
   public async getAPIKeyRemainingQuota(apiKey: string): Promise<number> {
     let remainingQuota = 0;
     const docRef = this.db.collection('api-keys').doc(apiKey);

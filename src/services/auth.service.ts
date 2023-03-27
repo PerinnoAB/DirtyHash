@@ -52,6 +52,16 @@ class AuthService {
     return false;
   }
 
+  public async logUserReport(authToken: string, reportString: string) {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        console.log('Valid token found: ', decodedToken.email);
+        await this.firestoreService.logUserReport(decodedToken.email, reportString);
+      }
+    }
+  }
+
   private sendUserEmail(userEmail: string, addr: string, chain: string, templateID: string) {
     if (isEmpty(userEmail)) return;
 
