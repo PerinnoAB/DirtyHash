@@ -76,6 +76,20 @@ class FirestoreService {
     await this.db.collection(collectionName).add(JSON.parse(JSON.stringify(payload)));
   }
 
+  public async logUserSearch(userEmail: string, searchTerm: string) {
+    const searchEntry = {
+      timestamp: new Date().getTime(),
+      searchTerm: searchTerm,
+    };
+
+    await this.db
+      .collection('users')
+      .doc(userEmail)
+      .update({
+        searches: FieldValue.arrayUnion(searchEntry),
+      });
+  }
+
   public async getAPIKeyRemainingQuota(apiKey: string): Promise<number> {
     let remainingQuota = 0;
     const docRef = this.db.collection('api-keys').doc(apiKey);

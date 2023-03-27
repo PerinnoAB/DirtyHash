@@ -29,7 +29,7 @@ class AuthService {
   // public users = userModel;
   public firestoreService = new FirestoreService();
 
-  public async shouldServeRequest(apiKey: string, authToken: string): Promise<Boolean> {
+  public async shouldServeRequest(apiKey: string, authToken: string, query: string): Promise<Boolean> {
     // if credentials are not provided, return true, as these requests will be throttled at the load balancer
     if (isEmpty(apiKey) && isEmpty(authToken)) {
       return true;
@@ -41,6 +41,7 @@ class AuthService {
         console.log('Valid token found: ', decodedToken.email);
         const remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
         console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+        await this.firestoreService.logUserSearch(decodedToken.email, query);
         return remaingQuota > 0 ? true : false;
       }
     } else if (!isEmpty(apiKey)) {
