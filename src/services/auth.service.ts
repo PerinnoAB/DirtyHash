@@ -18,7 +18,7 @@ limitations under the License.
 // import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 // import { User } from '@interfaces/users.interface';
 // import userModel from '@models/users.model';
-import { isEmpty } from '@utils/util';
+import { isEmpty, searchRequiresQuota } from '@utils/util';
 import FirestoreService from './firestore.service';
 import { SENDGRID_API_KEY, SENDGRID_TEMPLATE_ID_TRACK_WALLET, SENDGRID_TEMPLATE_ID_STOP_TRACK_WALLET, REPORT_EMAIL } from '@config';
 
@@ -39,14 +39,21 @@ class AuthService {
       const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
       if (decodedToken) {
         console.log('Valid token found: ', decodedToken.email);
-        const remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
-        console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+
+        let remaingQuota = 1;
+        if (searchRequiresQuota(query)) {
+          remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
+          console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+        }
         await this.firestoreService.logUserSearch(decodedToken.email, query);
         return remaingQuota > 0 ? true : false;
       }
     } else if (!isEmpty(apiKey)) {
-      const remaingQuota = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
-      console.log('API Key: ', apiKey, 'Remaining Quota: ', remaingQuota);
+      let remaingQuota = 1;
+      if (searchRequiresQuota(query)) {
+        remaingQuota = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
+        console.log('API Key: ', apiKey, 'Remaining Quota: ', remaingQuota);
+      }
       return remaingQuota > 0 ? true : false;
     }
     return false;

@@ -137,6 +137,28 @@ export const getCollection = (searchString: string): [string, string] => {
 };
 
 /**
+ * @method searchRequiresQuota
+ * @param {string} searchTerm
+ * @returns {Boolean} result
+ * @description returns true if this search requires quota
+ */
+export const searchRequiresQuota = (searchTerm: string): Boolean => {
+  try {
+    if (validate(searchTerm, 'btc')) {
+      return true;
+    } else if (validate(searchTerm.toLowerCase(), 'eth')) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log('Error in determining chain');
+  }
+
+  return false;
+};
+
+/**
  * @method getAllChainsForAddress
  * @param {string} walletAddress
  * @returns {string[]} list of chains
