@@ -137,10 +137,10 @@ export const getCollection = (searchString: string): [string, string] => {
 };
 
 /**
- * @method getCollection
- * @param {String} searchString
- * @returns {String, String} collectionName, transformedString
- * @description parses a string to obtain the database collection, string should already be checked with isEmpty()
+ * @method getAllChainsForAddress
+ * @param {string} walletAddress
+ * @returns {string[]} list of chains
+ * @description returns all the chains for a particular wallet address
  */
 export const getAllChainsForAddress = (walletAddress: string): string[] => {
   const chains = [];
