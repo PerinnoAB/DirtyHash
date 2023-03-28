@@ -107,6 +107,20 @@ class AuthService {
     return 0;
   }
 
+  public async getUserDashboard(authToken: string): Promise<any> {
+    if (!isEmpty(authToken)) {
+      const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
+      if (decodedToken) {
+        const dashboardData = await this.firestoreService.getUserDashboard(decodedToken.email);
+        // console.log('User: ', decodedToken.email, 'Dashboard: ', dashboardData);
+        return dashboardData;
+      } else {
+        console.log('No valid token');
+      }
+    }
+    return null;
+  }
+
   public async trackWallet(authToken: string, address: string, chain: string) {
     if (!isEmpty(authToken)) {
       const decodedToken = await this.firestoreService.decodeAuthToken(authToken);

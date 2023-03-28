@@ -44,6 +44,8 @@ export class QueryController {
   }
 
   @Get('/search-credits')
+  @OnNull(204)
+  @OnUndefined(403)
   @OpenAPI({
     summary: 'Returns the number of remaining search credits for a particular user',
   })
@@ -51,6 +53,17 @@ export class QueryController {
     const searchCredits = await this.authService.getSearchCredits(authToken);
     const response = { SearchCredits: searchCredits };
     return response;
+  }
+
+  @Get('/user-dashboard')
+  @OnNull(403)
+  @OnUndefined(403)
+  @OpenAPI({
+    summary: 'Returns data for a specific user, e.g. searches, reports, subscription, etc.',
+  })
+  async getUserDashboard(@HeaderParam('Authorization') authToken: string) {
+    const dashboardData = await this.authService.getUserDashboard(authToken);
+    return dashboardData;
   }
 
   @Get('/chains/:address')

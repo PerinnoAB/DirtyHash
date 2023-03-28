@@ -136,6 +136,15 @@ class FirestoreService {
     return remainingQuota;
   }
 
+  public async getUserDashboard(email: string): Promise<any> {
+    const docRef = this.db.collection('users').doc(email);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      return doc.data();
+    }
+    return null;
+  }
+
   public async trackWallet(email: string, address: string, chain: string): Promise<boolean> {
     const docRef = this.db.collection('users').doc(email);
 
