@@ -128,9 +128,14 @@ class FirestoreService {
       }
     } else {
       console.log('Email not found, setting default quota for: ', email);
+      // first create api key
+      const resKey = await this.db.collection('api-keys').add({
+        email: email,
+      });
       remainingQuota = 5;
       await docRef.set({
         RemainingQuota: remainingQuota,
+        apikey: resKey.id,
       });
     }
     return remainingQuota;
