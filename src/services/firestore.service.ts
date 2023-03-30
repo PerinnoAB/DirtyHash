@@ -140,7 +140,16 @@ class FirestoreService {
     const docRef = this.db.collection('users').doc(email);
     const doc = await docRef.get();
     if (doc.exists) {
-      return doc.data();
+      const snapshot = await docRef.collection('purchases').get();
+      const purchases = [];
+      snapshot.forEach(pDoc => {
+        purchases.push(pDoc.data());
+      });
+      const response = {
+        ...doc.data(),
+        Purchases: purchases,
+      };
+      return response;
     }
     return null;
   }
