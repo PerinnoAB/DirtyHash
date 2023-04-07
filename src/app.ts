@@ -116,7 +116,7 @@ class App {
 
     const swaggerUIOptions = {
       customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'DirtyHash API | Fraud Prevention for Web3 and Crypto',
+      customSiteTitle: 'DirtyHash API | The leading Crypto Fraud Prevention service',
       customfavIcon: 'https://dirtyhash.com/favicon.ico',
     };
 
