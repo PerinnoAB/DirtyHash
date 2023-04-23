@@ -12,8 +12,8 @@ limitations under the License.
 
 import { validate } from 'multicoin-address-validator';
 import validator from 'validator';
-import { getDomain } from 'tldts';
-const parse = require('url-parse');
+import { getDomain, parse } from 'tldts';
+const url_parse = require('url-parse');
 
 /**
  * @method isEmpty
@@ -85,9 +85,10 @@ export const getCollection = (searchString: string): [string, string] => {
     collectionName = 'twitter';
     transformedString = searchString.substring(1).toLowerCase();
   } else if (getDomain(searchString)) {
-    const strDomain = getDomain(searchString);
+    searchString = searchString.toLowerCase();
+    const strDomain = parse(searchString, { allowPrivateDomains: true },)['domain'];
     if (strDomain !== null) {
-      if (strDomain === 'twitter.com') {
+      if (strDomain.endsWith('twitter.com')) {
         const idex = searchString.indexOf('twitter.com/');
         if (idex >= 0) {
           searchString = searchString.slice(idex + 12);
@@ -98,7 +99,7 @@ export const getCollection = (searchString: string): [string, string] => {
             console.log('Twitter parsed handle: ', transformedString);
           }
         }
-      } else if (strDomain === 'youtube.com' || strDomain === 'youtu.be') {
+      } else if (strDomain.endsWith('youtube.com') || strDomain.endsWith('youtu.be')) {
         collectionName = 'youtube';
 
         // First check existance of @channel
@@ -106,7 +107,7 @@ export const getCollection = (searchString: string): [string, string] => {
         if (idex > 0) {
           transformedString = searchString.slice(idex + 1);
         } else {
-          const parsedURL = parse(searchString, true);
+          const parsedURL = url_parse(searchString, true);
 
           // First check the Youtube Video ID
           let ytID = 'youtube.com';
