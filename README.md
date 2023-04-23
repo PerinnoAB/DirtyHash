@@ -40,7 +40,7 @@ export REPORT_EMAIL = 'EMAIL_TO_RECEIVE_REPORT'
 ## Installation
 
 ```
-npm install  --legacy-peer-deps
+npm install --legacy-peer-deps
 npm install --force
 ```
 
