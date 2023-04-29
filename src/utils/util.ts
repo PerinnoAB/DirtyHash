@@ -63,6 +63,9 @@ export const getCollection = (searchString: string): [string, string] => {
   } else if (validate(searchString, 'ada')) {
     // ada is case sensitive
     collectionName = 'ada';
+  } else if (validate(searchString, 'doge')) {
+    // ada is case sensitive
+    collectionName = 'doge';
   } else if (validator.isEmail(searchString)) {
     collectionName = 'email';
     transformedString = validator.normalizeEmail(searchString, {
