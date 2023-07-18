@@ -21,6 +21,9 @@ limitations under the License.
 import { isEmpty, searchRequiresQuota } from '@utils/util';
 import FirestoreService from './firestore.service';
 import { SENDGRID_API_KEY, SENDGRID_TEMPLATE_ID_TRACK_WALLET, SENDGRID_TEMPLATE_ID_STOP_TRACK_WALLET, REPORT_EMAIL } from '@config';
+import { CreateReportDto } from '@/dtos/reports.dto';
+import ReportService from './report.service';
+import { ReportCategory } from '@/interfaces/report.interface';
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(SENDGRID_API_KEY);
@@ -28,6 +31,7 @@ sgMail.setApiKey(SENDGRID_API_KEY);
 class AuthService {
   // public users = userModel;
   public firestoreService = new FirestoreService();
+  public reportService = new ReportService();
 
   public async shouldServeRequest(apiKey: string, authToken: string, query: string): Promise<Boolean> {
     // if credentials are not provided, return true, as these requests will be throttled at the load balancer
@@ -59,14 +63,20 @@ class AuthService {
     return false;
   }
 
-  public async logUserReport(authToken: string, reportString: string) {
+  public async logUserReport(authToken: string, reportString: string, category: ReportCategory, otherCategory: string, url: string, abuser: string, description: string, name: string, email: string): Promise<Boolean> {
     if (!isEmpty(authToken)) {
       const decodedToken = await this.firestoreService.decodeAuthToken(authToken);
       if (decodedToken) {
         console.log('Valid token found: ', decodedToken.email);
         await this.firestoreService.logUserReport(decodedToken.email, reportString);
+
+        const reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
+        // Write report to data without waiting for it to finish
+        this.reportService.createReport(reportData);
+        return true;
       }
     }
+    return false;
   }
 
   private sendUserEmail(userEmail: string, addr: string, chain: string, templateID: string) {

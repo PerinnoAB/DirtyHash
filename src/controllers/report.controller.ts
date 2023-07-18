@@ -14,12 +14,12 @@ import { CreateReportDto } from '@/dtos/reports.dto';
 import { ReportCategory } from '@/interfaces/report.interface';
 import AuthService from '@/services/auth.service';
 import ReportService from '@/services/report.service';
-import { BodyParam, Controller, HttpCode, OnNull, Post, HeaderParam } from 'routing-controllers';
+import { isEmpty } from '@/utils/util';
+import { BodyParam, Controller, HttpCode, OnNull, OnUndefined, Post, HeaderParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
 export class ReportController {
-  public reportService = new ReportService();
   public authService = new AuthService();
 
   @Post('/report')
@@ -32,10 +32,14 @@ export class ReportController {
       400: {
         description: 'Bad request',
       },
+      401: {
+        description: 'Unauthozized, invalid or missing auth token',
+      },
     },
   })
   @HttpCode(201)
   @OnNull(400)
+  @OnUndefined(401)
   async createReport(
     @HeaderParam('Authorization') authToken: string,
     @BodyParam('reportString', { required: true }) reportString: string,
@@ -52,11 +56,9 @@ export class ReportController {
       if (!category) {
         return null;
       }
-      const reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
-      // Write report to data without waiting for it to finish
-      this.reportService.createReport(reportData);
-      this.authService.logUserReport(authToken, reportString);
-      return true;
+
+      const result = await this.authService.logUserReport(authToken, reportString, category, otherCategory, url, abuser, description, name, email);
+      return result == false ? undefined : true;
     } catch (error) {
       console.error('Error while creating report: ', error);
       return null;
