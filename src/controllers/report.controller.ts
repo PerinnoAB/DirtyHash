@@ -33,7 +33,7 @@ export class ReportController {
         description: 'Bad request',
       },
       401: {
-        description: 'Unauthozized, invalid or missing auth token',
+        description: 'Unauthorized, invalid or missing auth token',
       },
     },
   })

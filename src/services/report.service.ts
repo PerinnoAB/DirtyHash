@@ -88,22 +88,23 @@ class ReportService {
     console.log('Report payload: ', payload);
     this.sendOpsEmail(payload);
 
-    // Check the string reported and act to the relevant collections
-    if (!isEmpty(payload.reportString)) {
-      this.reportEntity(payload.reportString, payload);
-    }
+    // All user reports will be manually verified offline and then blacklisted 
+    // // Check the string reported and act to the relevant collections
+    // if (!isEmpty(payload.reportString)) {
+    //   this.reportEntity(payload.reportString, payload);
+    // }
 
-    // If report contains URL
-    if (!isEmpty(payload.url) && payload.reportString !== payload.url) {
-      this.reportEntity(payload.url, payload);
-    }
+    // // If report contains URL
+    // if (!isEmpty(payload.url) && payload.reportString !== payload.url) {
+    //   this.reportEntity(payload.url, payload);
+    // }
 
-    // If report abuser details
-    if (!isEmpty(payload.abuser)) {
-      if (validator.isEmail(payload.abuser) || payload.abuser.startsWith('@') || payload.abuser.endsWith('.eth')) {
-        this.reportEntity(payload.abuser, payload);
-      }
-    }
+    // // If report abuser details
+    // if (!isEmpty(payload.abuser)) {
+    //   if (validator.isEmail(payload.abuser) || payload.abuser.startsWith('@') || payload.abuser.endsWith('.eth')) {
+    //     this.reportEntity(payload.abuser, payload);
+    //   }
+    // }
 
     this.sendUserEmail(payload);
 
