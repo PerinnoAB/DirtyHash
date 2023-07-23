@@ -44,13 +44,16 @@ class AuthService {
       if (decodedToken) {
         console.log('Valid token found: ', decodedToken.email);
 
-        let remaingQuota = 1;
-        if (searchRequiresQuota(query)) {
-          remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
-          console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
-        }
-        await this.firestoreService.logUserSearch(decodedToken.email, query);
-        return remaingQuota > 0 ? true : false;
+        // let remaingQuota = 1;
+        // if (searchRequiresQuota(query)) {
+        //   remaingQuota = await this.firestoreService.getUserRemainingQuota(decodedToken.email);
+        //   console.log('User: ', decodedToken.email, 'Remaining Quota: ', remaingQuota);
+        // }
+        // await this.firestoreService.logUserSearch(decodedToken.email, query);
+        // return remaingQuota > 0 ? true : false;
+
+        // Allow searches for loggedin users
+        return true;
       }
     } else if (!isEmpty(apiKey)) {
       let remaingQuota = 1;

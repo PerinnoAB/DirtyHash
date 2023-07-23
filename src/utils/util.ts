@@ -147,18 +147,17 @@ export const getCollection = (searchString: string): [string, string] => {
  * @description returns true if this search requires quota
  */
 export const searchRequiresQuota = (searchTerm: string): Boolean => {
-  // Disable quota requirements if user is logged in
-  // try {
-  //   if (validate(searchTerm, 'btc')) {
-  //     return true;
-  //   } else if (validate(searchTerm.toLowerCase(), 'eth')) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // } catch (error) {
-  //   console.log('Error in determining chain');
-  // }
+  try {
+    if (validate(searchTerm, 'btc')) {
+      return true;
+    } else if (validate(searchTerm.toLowerCase(), 'eth')) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log('Error in determining chain');
+  }
 
   return false;
 };
