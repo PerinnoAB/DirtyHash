@@ -72,7 +72,7 @@ class AuthService {
 
         const reportData = new CreateReportDto(reportString, category, otherCategory, url, abuser, description, name, email);
         // Write report to data without waiting for it to finish
-        this.reportService.createReport(reportData);
+        this.reportService.createReport(reportData, decodedToken.email);
         return true;
       }
     }
