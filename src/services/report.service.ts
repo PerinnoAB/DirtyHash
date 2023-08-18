@@ -24,12 +24,12 @@ class ReportService {
   public firestoreService = new FirestoreService();
   reportsCollectionName = 'reports';
 
-  private sendUserEmail(payload: Report) {
-    if (isEmpty(payload.email)) return;
+  private sendUserEmail(payload: Report, user: string) {
+    if (isEmpty(user)) return;
 
-    if (isEmail(payload.email)) {
+    if (isEmail(user)) {
       const msg = {
-        to: payload.email,
+        to: user,
         from: REPORT_EMAIL,
         bcc: REPORT_EMAIL,
         templateId: SENDGRID_TEMPLATE_ID,
@@ -50,7 +50,7 @@ class ReportService {
     }
   }
 
-  private sendOpsEmail(payload: Report) {
+  private sendOpsEmail(payload: Report, user: string) {
     // send email to DH Ops team
     const msg = {
       to: 'contact@dirtyhash.com', // Change to your recipient
@@ -58,7 +58,9 @@ class ReportService {
       subject: 'New user report: ' + payload.reportString,
       text: 'report',
       html:
-        '<p>Abuser: ' +
+        '<p>Reported by user: ' +
+        user +
+        '</p><p>Abuser: ' +
         payload.abuser +
         '</p><p>Category: ' +
         payload.category +
@@ -86,7 +88,7 @@ class ReportService {
 
   public async createReport(payload: Report, user: string): Promise<any> {
     console.log('Report payload: ', payload);
-    this.sendOpsEmail(payload);
+    this.sendOpsEmail(payload, user);
 
     // Only allow user reports which are manually verified offline
     if (user === 'contact@dirtyhash.com') {
@@ -108,7 +110,7 @@ class ReportService {
       }
     }
 
-    this.sendUserEmail(payload);
+    this.sendUserEmail(payload, user);
 
     return this.firestoreService.addDoc(this.reportsCollectionName, payload);
   }
