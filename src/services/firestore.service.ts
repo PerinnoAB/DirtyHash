@@ -18,8 +18,8 @@ class FirestoreService {
   // Initialize Firebase
   app = !getApps().length
     ? initializeApp({
-        credential: applicationDefault(),
-      })
+      credential: applicationDefault(),
+    })
     : getApp();
 
   db = getFirestore(this.app);
@@ -104,15 +104,16 @@ class FirestoreService {
       });
   }
 
-  public async getAPIKeyRemainingQuota(apiKey: string): Promise<number> {
+  public async getAPIKeyRemainingQuota(apiKey: string): Promise<[number, string]> {
     let remainingQuota = 0;
+    let email = '';
     const docRef = this.db.collection('api-keys').doc(apiKey);
     const doc = await docRef.get();
     if (doc.exists) {
-      const email = doc.data().email;
+      email = doc.data().email;
       remainingQuota = await this.getUserRemainingQuota(email);
     }
-    return remainingQuota;
+    return [remainingQuota, email];
   }
 
   public async getUserRemainingQuota(email: string, decrement = -1): Promise<number> {

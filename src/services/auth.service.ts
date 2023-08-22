@@ -57,10 +57,12 @@ class AuthService {
       }
     } else if (!isEmpty(apiKey)) {
       let remaingQuota = 1;
+      let email = '';
       if (searchRequiresQuota(query)) {
-        remaingQuota = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
-        console.log('API Key: ', apiKey, 'Remaining Quota: ', remaingQuota);
+        [remaingQuota, email] = await this.firestoreService.getAPIKeyRemainingQuota(apiKey);
+        console.log('API Key: ', apiKey, 'Email: ', email, 'Remaining Quota: ', remaingQuota);
       }
+      await this.firestoreService.logUserSearch(email, query);
       return remaingQuota > 0 ? true : false;
     }
     return false;
