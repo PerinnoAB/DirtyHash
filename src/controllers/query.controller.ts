@@ -15,11 +15,13 @@ import AuthService from '@/services/auth.service';
 import { Controller, Get, OnNull, OnUndefined, Param, HeaderParam, Post, HttpCode, BodyParam } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { getAllChainsForAddress, isEmpty } from '../utils/util';
+import MLService from '@/services/ml.service';
 
 @Controller()
 export class QueryController {
   public queryService = new QueryService();
   public authService = new AuthService();
+  public mlService = new MLService();
 
   @Get('/query/:query')
   @OpenAPI({
@@ -74,6 +76,20 @@ export class QueryController {
   async getChainsForAddress(@Param('address') address: string) {
     if (!isEmpty(address)) {
       return JSON.stringify(getAllChainsForAddress(address));
+    }
+    return null;
+  }
+
+  @Get('/ai-summary/:json_data')
+  @OpenAPI({
+    summary: 'Generate an AI summary of the risk associated with a crypto wallet',
+  })
+  @OnNull(204)
+  async getAISummary(@Param('json_data') jsonData: string) {
+    console.log('Get AI Summary for', jsonData.substring(0, 20));
+    if (!isEmpty(jsonData)) {
+      const summary = await this.mlService.getAISummary(jsonData);
+      return summary;
     }
     return null;
   }

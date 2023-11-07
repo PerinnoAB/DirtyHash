@@ -20,6 +20,7 @@ class MLService {
   ML_SERVER_URL_BTC = ML_SERVER + '/classify-btc';
   ML_SERVER_URL_ETH = ML_SERVER + '/classify-eth';
   ML_SERVER_URL_TWITTER = ML_SERVER + '/analyze-twitter';
+  ML_SERVER_URL_AISUMMARY = ML_SERVER + '/generate-ai-summary';
 
   public async getAnalysisTwitter(searchString: string): Promise<any> {
     try {
@@ -62,6 +63,21 @@ class MLService {
       }
     } catch (err) {
       console.error('ERROR: Failed to call ML ETH API', err);
+    }
+    return null;
+  }
+
+  public async getAISummary(jsonData: string): Promise<string> {
+    try {
+      const resp = await axios.get(this.ML_SERVER_URL_ETH, {
+        params: { json_data: jsonData },
+      });
+
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    } catch (err) {
+      console.error('ERROR: Failed to call AI Summary API', err);
     }
     return null;
   }
