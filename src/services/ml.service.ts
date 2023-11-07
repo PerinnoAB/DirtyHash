@@ -69,7 +69,7 @@ class MLService {
 
   public async getAISummary(jsonData: string): Promise<string> {
     try {
-      const resp = await axios.get(this.ML_SERVER_URL_ETH, {
+      const resp = await axios.get(this.ML_SERVER_URL_AISUMMARY, {
         params: { json_data: jsonData },
       });
 
